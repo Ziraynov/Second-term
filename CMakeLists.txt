@@ -3,5 +3,5 @@ project(Second_term C)
 
 set(CMAKE_C_STANDARD 99)
 
-add_executable(Second_term src/lab1/main.c src/lab1/Header.h src/lab1/functions)
+add_executable(src/lab1/main.c src/lab1/Header.h src/lab1/functions)
 
