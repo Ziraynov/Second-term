@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.23)
-project(oaip_labs2 C)
+project(Secont-term C)
 
 set(CMAKE_C_STANDARD 99)
 
