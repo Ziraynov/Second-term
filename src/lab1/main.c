@@ -1,11 +1,11 @@
 ﻿#include "Header.h"
 
 int main()
-{
+    {
 	setlocale(LC_ALL, "RUS");
 	system("chcp 1251 > nul");
 	setlocale(LC_ALL, ".utf8");
-	const char path[] = { "C:/projects/second term/Lab1/monitors.txt" };
+	const char path[] = { "C:/Users/ziray/CLionProjects/Secondterm/src/lab1/monitors.html" };
 	int key, number = 0;
 	monitor* arr = parse_html(&path, &number);
 	while (1)
@@ -25,4 +25,3 @@ int main()
 	}
 	return 0;
 }
-
