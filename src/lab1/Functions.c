@@ -18,13 +18,12 @@ void find_number(int *number, char *html_string) {
     }
 }
 
-monitor *parse_html(const char*   path, int *number) {
+monitor *parse_html(const char *path, int *number) {
     char *html_string = file(path);
     find_number(number, html_string);
     monitor *arr = calloc(*number, sizeof(monitor));
     for (int i = 0; i < *number; i++) {
         arr[i].name = get_the_word(&html_string, "class=\"\" alt=\"", " - \"/>");
-
 
         if (second_word("LG", arr[i].name)) {
             arr[i].producer = LG;
@@ -54,6 +53,7 @@ monitor *parse_html(const char*   path, int *number) {
     }
     return arr;
 }
+
 const char *const monitor_producers[] =
         {
                 [LG] = "LG",
@@ -80,10 +80,11 @@ void sort(monitor *arr, int len) {
     printf("1. Name\n2. Price\n3. Producers\n4. Name and Price\n5. Producer and Matrix\n0. Exit\n");
     int key;
     get_key(&key);
-        switch (key) {
-            default: printf("Fatal ERROR");
+    switch (key) {
+        default:
+            printf("Fatal ERROR");
             break;
-            case 1:
+        case 1:
             qsort(arr, len, sizeof(monitor), (int (*)(const void *, const void *)) comp_name);
             break;
         case 2:
@@ -154,8 +155,8 @@ void rem(monitor *arr, int *len) {
     }
 }
 
-char *file(const char*  path) {
-    FILE* fp;
+char *file(const char *path) {
+    FILE *fp;
     fp = fopen(path, "r");
     fseek(fp, 0, SEEK_END);
     long len = ftell(fp);
@@ -167,27 +168,12 @@ char *file(const char*  path) {
     return buffer;
 }
 
-int if_letter(const char   s) {
-    if (((int)s >= 'a' && (int)s <= 'z') || ((int)s >= 'A' && (int)s <= 'Z'))
-        return 1;
-    return 0;
-}
-
-int second_word(const char *pre,const char *array) {
-    int i = 1;int count = 0;int flag=0;
-    while (array[i] != '\0') {
-        if (if_letter(array[i - 1]) == 0 && if_letter(array[i]) == 1) {
-            flag = 1;
-            int p = i;
-            while (array[p]!=' ')
-                if (pre[count++] != array[p++])
-                    return 0;
-        }
-        if (flag)
-            break;
-        i++;
-        count = 0;
-    }
+int second_word(const char *pre, const char *array) {
+    int i = 15;
+    int count = 0;
+    while (pre[count] != '\0')
+        if (pre[count++] != array[i++])
+               return 0;
     return 1;
 
 
