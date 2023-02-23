@@ -19,13 +19,9 @@ typedef struct {
 	double price;
 	producer_of_monitor producer;
 }monitor;
-typedef struct {
-	int len;
-	char** str;
-}string;
 void get_key(int* key);
 void find_number(int* number, char* html_string);
-monitor* parse_html(char* path, int* number);
+monitor* parse_html(const char*  path, int* number);
 void show(monitor* array, int len);
 void sort(monitor* arr, int len);
 void add_word(monitor* arr, int* len);
@@ -37,7 +33,7 @@ void rem(monitor* arr, int* len);
 
 
 
-char* file(const char* const *path);
+char* file(const char  *path);
 int second_word(const char* pre,const char* string);
 char* get_the_word(char** doc, char* firststr, char* secondstr);
 

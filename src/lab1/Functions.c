@@ -18,7 +18,7 @@ void find_number(int *number, char *html_string) {
     }
 }
 
-monitor *parse_html(char *path, int *number) {
+monitor *parse_html(const char*   path, int *number) {
     char *html_string = file(path);
     find_number(number, html_string);
     monitor *arr = calloc(*number, sizeof(monitor));
@@ -154,7 +154,7 @@ void rem(monitor *arr, int *len) {
     }
 }
 
-char *file(const char* const* path) {
+char *file(const char*  path) {
     FILE* fp;
     fp = fopen(path, "r");
     fseek(fp, 0, SEEK_END);
@@ -167,8 +167,8 @@ char *file(const char* const* path) {
     return buffer;
 }
 
-int if_letter(const char* const  *s) {
-    if ((s >= 'a' && s <= 'z') || (s >= 'A' && s <= 'Z'))
+int if_letter(const char   s) {
+    if (((int)s >= 'a' && (int)s <= 'z') || ((int)s >= 'A' && (int)s <= 'Z'))
         return 1;
     return 0;
 }
@@ -195,15 +195,14 @@ int second_word(const char *pre,const char *array) {
 
 char *get_the_word(char **doc, char *firststr, char *secondstr) {
 
-    int lenfirst = strlen(firststr);
+    unsigned int lenfirst = strlen(firststr);
     char *buf = strstr((*doc), firststr);
     if (buf == NULL)
-        return '\0';
+        return 0;
     char *buf2 = strstr(buf, secondstr);
-    long len = strlen(buf);
-    long len3 = strlen(buf2);
+    unsigned int len = strlen(buf);
+    unsigned int len3 = strlen(buf2);
     char *newstr1 = strstr((*doc), firststr);
-    int len2 = strlen(secondstr);
     char *copy_of_str = calloc(len - len3 - lenfirst, sizeof(char));
     strncpy(copy_of_str, &newstr1[lenfirst], len - len3 - lenfirst);
     copy_of_str[len - len3 - lenfirst] = '\0';
