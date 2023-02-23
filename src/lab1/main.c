@@ -13,7 +13,8 @@ int main()
 		printf("1. Show\n2. Add\n3. Remove\n4. Sort\n5. Exit\n");
 		get_key(&key);
 		switch (key)
-		{
+        {default:
+                printf("Fatal,Error");break;
 
 		case 1:show(arr, number); break;
 		case 2:add_word(arr, &number); break;
@@ -23,5 +24,4 @@ int main()
 		}
 
 	}
-	return 0;
 }
