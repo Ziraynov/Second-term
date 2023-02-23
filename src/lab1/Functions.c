@@ -106,8 +106,7 @@ void sort(monitor *arr, int len) {
 void add_word(monitor *arr, int *len) {
     char *add = malloc(1);
     printf("Input monitor [|name/matrix|price/]: ");
-    rewind(stdin);
-    gets(add);
+    fgets(add, 1000, stdin);
 
     ++(*len);
 

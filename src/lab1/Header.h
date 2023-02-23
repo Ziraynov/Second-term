@@ -3,12 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <locale.h>
+#include <conio.h>
 
-//void show(monitor* array, int* len);
-//void add(monitor* array, int* len);
-//void stop(monitor* array, int* len);
-//void rem(monitor* array, int* len);
-//void sort(monitor* array, int* len);
 typedef enum {
 	LG, Samsung,GigaByte,AOC, Huawei, Philips, BenQ, HP,Asus
 
