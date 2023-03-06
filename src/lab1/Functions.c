@@ -106,6 +106,7 @@ void sort(monitor *arr, int len) {
 void add_word(monitor *arr, int *len) {
     char *add = malloc(1);
     printf("Input monitor [|name/matrix|price/]: ");
+    rewind(stdin);
     fgets(add, 1000, stdin);
 
     ++(*len);
@@ -216,7 +217,7 @@ int comp_producer_matrix(const monitor *a, const monitor *b) {
     } else if (a->producer < b->producer) {
         return -1;
     } else {
-        return (b->producer < a->producer) - (a->producer < b->producer);
+        return strcmp(a->matrix,b->matrix);
     }
 }
 
