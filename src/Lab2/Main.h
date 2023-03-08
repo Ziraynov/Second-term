@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <locale.h>
-typedef stuct lifo{
+typedef struct lifo{
     char *words;
     int amount;
     struct lifo *next;
