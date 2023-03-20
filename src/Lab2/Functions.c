@@ -16,18 +16,43 @@ void print_file_size(const char *filename) {
     fclose(file);
 }
 
+int if_letter(char *word, int i) {
+    if ((word[i] >= 'A' && word[i] <= 'Z') || (word[i] >= 'a' && word[i] <= 'z') || (word[i] >= '0' && word[i] <= '9'))
+        return 0;
+    return 1;
+
+}
+
 char *only_symbols(char *buffer) {
-    while (1) {
-        int word_len = (int) strlen(buffer);
-        word_len--;
-        if (buffer[word_len] == ' ' || buffer[word_len] == '.' || buffer[word_len] == ',' ||
-            buffer[word_len] == '!' || buffer[word_len] == '?' || buffer[word_len] == -62 || buffer[word_len] == '[' ||
-            buffer[word_len] == ']')
-            buffer[word_len] = '\0';
-        else break;
+    int word_len = (int) strlen(buffer);
+    int i = 0, flag = 0, priority = 0;
+
+    while (if_letter(buffer, i) != 0 || if_letter(buffer, word_len - 1) != 0) {
+
+        if (if_letter(buffer, i) != 0) {
+            flag = 1;
+            priority = 1;
+        }
+        if (if_letter(buffer, word_len - 1) != 0)
+            flag = 2;
+
+        if (flag == 1 || priority == 1)
+            while (if_letter(buffer, i) != 0) {
+                for (int k = 0; k < word_len - 1; k++)
+                    buffer[k] = buffer[k + 1];
+                // buffer = (char *) realloc(buffer, --word_len * sizeof(char));
+                buffer[word_len--] = '\0';
+
+            }
+        if (flag == 2)
+            while (if_letter(buffer, word_len - 1) != 0) {
+                buffer[--word_len] = '\0';
+            }
     }
+    buffer[word_len] = '\0';
     return buffer;
 }
+
 
 LIFO *create(LIFO *head, int count, char *word) {
     LIFO *n;
@@ -44,121 +69,239 @@ LIFO *create(LIFO *head, int count, char *word) {
     return head;
 }
 
-Short *struct_short_words(LIFO *head, int *size, int len, int pop) {
+short_words *struct_short_words(LIFO *head, int *size, int len, int pop) {
 
-    Short *buffer;
-    buffer = (Short *) malloc(1 * sizeof(Short));
+    short_words *buffer;
+    buffer = (short_words *) calloc(1, sizeof(short_words));
     int i = 0;
     LIFO *p = head;
     while (p != NULL) {
-        if (strlen(p->words) <= len  && p->amount < pop) {
-            buffer = realloc(buffer, (i + 1) * sizeof(Short));
-            buffer[i].short_word = (char *) malloc(strlen(p->words) * sizeof(char));
+        if (strlen(p->words) < len && p->amount < pop) {
+            buffer = (short_words *) realloc(buffer, (i + 1) * sizeof(short_words));
+            buffer[i].short_word = (char *) calloc(((int) strlen(p->words) + 1), sizeof(char));
             buffer[i].short_word = p->words;
             i++;
         }
         p = p->next;
     }
     *size = i;
-    for (int k = 0; k < i; k++)
-        printf("\nShort: %s\n", buffer[k].short_word);
     return buffer;
 }
 
-Long *struct_long_words(LIFO *head, int *size, int len, int pop) {
-    Long *buffer;
-    buffer = (Long *) malloc(1 * sizeof(Long));
+long_words *struct_long_words(LIFO *head, int *size, int len, int pop) {
+    long_words *buffer;
+    buffer = (long_words *) calloc(1, sizeof(long_words));
     int i = 0;
     LIFO *p = head;
     while (p != NULL) {
-        if (strlen(p->words) >= len * 1.5 && p->amount > pop) {
-            buffer = realloc(buffer, (i + 1) * sizeof(Long));
-            buffer[i].long_word = (char *) malloc(strlen(p->words) * sizeof(char));
+        if (strlen(p->words) > len && p->amount > pop) {
+            buffer = (long_words *) realloc(buffer, (i + 1) * sizeof(long_words));
+            buffer[i].long_word = (char *) calloc(((int) strlen(p->words) + 1), sizeof(char));
             buffer[i].long_word = p->words;
             i++;
         }
         p = p->next;
     }
     *size = i;
-    for (int k = 0; k < i; k++)
-        printf("\nLong: %s\n", buffer[k].long_word);
+
     return buffer;
 }
 
-//char *return_for_copy(char *line, int i, int *len_d, Long *words) {
-/*char *buffer = (char*)malloc(2000 * sizeof(char));
-int len;
-int flag=0;
-char *temp;
-if (strstr(line, words[i].short_word) != 0 || strstr(line, words[i].long_word) != 0)
-    if ((strstr(line, words[i].short_word) != NULL && strstr(line, words[i].long_word) != NULL &&
-         ((int) strstr(line, words[i].short_word) < (int) strstr(line, words[i].long_word))) ||
-        (strstr(line, words[i].short_word) != NULL && strstr(line, words[i].long_word) == NULL)) {
-        temp = malloc(2000 * sizeof(char));
-        buffer = strstr(line, words[i].short_word);
-        len =(int)strlen(line) - (int)strlen(buffer);
-        strncpy(temp, line, len);
-        *len_d += (int) strlen(temp) + (int) strlen(words[i].short_word);
-        strcpy(temp, words[i].long_word);
-        flag=1;
-
-    } else {
-        flag=1;
-        buffer = strstr(line, words[i].long_word);
-        temp = (char*)malloc(((int)strlen(line)-(int)strlen(buffer))*sizeof (char));
-        temp[((int)strlen(line)-(int)strlen(buffer))]='\0';
-        len = (int)strlen(line) - (int)strlen(buffer);
-        strncpy(temp, line, len);
-        *len_d = strlen(temp) + strlen(words[i].long_word);
-        len=strlen(temp);
-        strcpy(&temp[len], words[i].short_word);
+int if_real_word(char *buffer, char *word) {
+    int i,k=0;
+    char *word1=(char*) calloc(100,sizeof(char));
+    char *chek_symbol=(char*) calloc(100,sizeof(char));
+    while (strcmp(chek_symbol," ")!=0){
+        strncat(word1,&buffer[k++],1);
+    strncpy(chek_symbol,&buffer[k],1);
     }
-if (flag == NULL)
-    return NULL;
-return temp;
-}*/
-void rewrite_file(const char *old_file, const char *new_file, Long *words, Short *words1, int size) {
+    word1=only_symbols(word1);
+    if((int) strlen(word1)!=(int)strlen(word))
+        return 0;
+    for (i = 0; i < (int) strlen(word); i++)
+        if (word1[i] == word[i])
+            i++;
+    if (i == (int) strlen(word)+1)
+        return 1;
+    return 0;
+
+}
+
+char *long_to_short(char *buffer, char *longword, char *shortword) {
+    char *newbuffer = (char *) calloc((int) strlen(buffer) + 100, sizeof(char));
+    while (strstr(buffer, longword)) {
+        char *start_of_longw;
+        start_of_longw = strstr(buffer, longword);
+        int len = ((int) strlen(buffer) - (int) strlen(start_of_longw));
+        if (if_real_word(start_of_longw, longword) == 1) {
+            strncat(newbuffer, buffer, len);
+            strcat(newbuffer, shortword);
+            buffer += len + (int) strlen(longword);
+        } else {
+            strncat(newbuffer, buffer, len);
+            strcat(newbuffer, longword);
+            buffer += len + (int) strlen(longword);
+        }
+    }
+    strncat(newbuffer, buffer, strlen(buffer));
+    return newbuffer;
+}
+
+char *short_to_long(char *buffer, char *longword, char *shortword) {
+    char *newbuffer = (char *) calloc((int) strlen(buffer) + 100, sizeof(char));
+    while (strstr(buffer, shortword) != 0) {
+        char *start_of_shortw;
+        start_of_shortw = strstr(buffer, shortword);
+        int len = ((int) strlen(buffer) - (int) strlen(start_of_shortw));
+        if (if_real_word(start_of_shortw, shortword) == 1) {
+            strncat(newbuffer, buffer, len);
+            strncat(newbuffer, longword, (int) strlen(longword));
+            buffer += len + (int) strlen(shortword);
+        } else {
+            strncat(newbuffer, buffer, len);
+            strcat(newbuffer, shortword);
+            buffer += len + (int) strlen(shortword);
+        }
+
+    }
+    strncat(newbuffer, buffer, (int) strlen(buffer));
+    return newbuffer;
+}
+
+char *replace_words(char *buffer, char *lw, char *sw) {
+    char *newbuffer = (char *) calloc((int) strlen(buffer) + 100, sizeof(char));
+    while (strstr(buffer, lw) != NULL || strstr(buffer, sw) != NULL) {
+
+        if (((int)strstr(buffer, lw) < (int)strstr(buffer, sw)) && strstr(buffer, lw)!=0 || ( strstr(buffer, sw)==NULL  && strstr(buffer,lw)!=0)) {
+            char *start_of_longw;
+            start_of_longw = strstr(buffer, lw);
+            int len = ((int) strlen(buffer) - (int) strlen(start_of_longw));
+            if (if_real_word(start_of_longw, lw) == 1) {
+                strncat(newbuffer, buffer, len);
+                strcat(newbuffer, sw);
+                buffer += len + (int) strlen(lw);
+            } else {
+                strncat(newbuffer, buffer, len);
+                strcat(newbuffer, lw);
+                buffer += len + (int) strlen(lw);
+            }
+        } if (((int)strstr(buffer, sw) < (int)strstr(buffer, lw)) && strstr(buffer, sw)!=0  || (strstr(buffer, lw)==NULL && strstr(buffer, sw)!=NULL )) {
+            char *start_of_shortw;
+            start_of_shortw = strstr(buffer, sw);
+            int len = ((int) strlen(buffer) - (int) strlen(start_of_shortw));
+            if (if_real_word(start_of_shortw, sw) == 1) {
+                strncat(newbuffer, buffer, len);
+                strncat(newbuffer, lw, (int) strlen(lw));
+                buffer += len + (int) strlen(sw);
+            } else {
+                strncat(newbuffer, buffer, len);
+                strcat(newbuffer, sw);
+                buffer += len + (int) strlen(sw);
+            }
+
+        }
+    }
+    strncat(newbuffer, buffer, (int) strlen(buffer));
+    return newbuffer;
+}
+
+char *new_str(char *buffer, char *longword, char *shortword, int i) {
+    char *newbuffer;
+    if (strstr(buffer, longword) != NULL && strstr(buffer, shortword) != NULL) {
+        newbuffer = replace_words(buffer, longword, shortword);
+        return newbuffer;
+    }
+    if (strstr(buffer, longword) != NULL && strstr(buffer, shortword) == NULL) {
+
+        newbuffer = long_to_short(buffer, longword, shortword);
+        return newbuffer;
+
+    }
+    if (strstr(buffer, shortword) != NULL && strstr(buffer, longword) == NULL) {
+
+        newbuffer = short_to_long(buffer, longword, shortword);
+        return newbuffer;
+    }
+
+    return buffer;
+}
+
+void rewrite_file(const char *old_file, const char *new_file, long_words *words, short_words *words1, int size) {
+
     FILE *file = fopen(old_file, "r");
     FILE *newfile = fopen(new_file, "w");
     if (file == NULL || newfile == NULL) {
         printf("Ошибка при открытии файла!");
         return;
     }
-    char *line= (char*)malloc(2000*sizeof(char));
-    while(fgets(line,2000,file)){
-        for(int i=0;i<size;i++){
-
-
-
-
-
-
-
-
-
-
-
-        }
-
-
-
-
-
-
-
-
+    int amount = 0;
+    for (int i = 0; i < size; i++)
+        amount += 2 + (int) strlen(words[i].long_word) + (int) strlen(words1[i].short_word);
+    char *am = (char *) calloc(1, sizeof(char));
+    itoa(amount, am, 10);
+    fputs(am, newfile);
+    fputs(" ", newfile);
+    for (int i = 0; i < size; i++) {
+        fputs(" ", newfile);
+        fputs(words[i].long_word, newfile);
+        fputs(" ", newfile);
+        fputs(words1[i].short_word, newfile);
     }
-
+    fputs("\n", newfile);
+    char *line = (char *) calloc(1601, sizeof(char));
+    char *buffer;
+    while (fgets(line, 1600, file)) {
+        buffer = line;
+        for (int i = 0; i < size; i++) {
+            buffer = new_str(buffer, words[i].long_word, words1[i].short_word, i);
+        }
+        fputs(buffer, newfile);
+    }
     fclose(file);
     fclose(newfile);
-
-    printf("Файл успешно перезаписан!");
+    printf("Файл успешно перезаписан!\n");
 
 }
 
+void free_stack(LIFO **head) {
+    while (*head) {
+        *head = (*head)->next;
+        *head = (LIFO *) realloc(*head, 0 * sizeof(LIFO));
+    }
+}
+
+int profit(LIFO *head, char *longword, char *shortword) {
+    int amountl = 0, amounts = 0;
+    LIFO *p = head;
+    while (p != NULL) {
+        if (strcmp(longword, p->words) == 0)
+            amountl = p->amount;
+        if (strcmp(shortword, p->words) == 0)
+            amounts = p->amount;
+        p = p->next;
+    }
+    return (int) strlen(longword) * amountl - (int) strlen(shortword) * amounts;
+}
+
+int amountlw(LIFO *head, char *lw) {
+    while (head != NULL) {
+        if (strcmp(lw, head->words) == 0)
+            return head->amount;
+        head = head->next;
+    }
+}
+
+int amountsw(LIFO *head, char *sw) {
+    while (head != NULL) {
+        if (strcmp(sw, head->words) == 0)
+            return head->amount;
+        head = head->next;
+    }
+}
+
 void new_file(const char *path, LIFO *head, int len_of_words, int popularity) {
-    Long *words;
-    Short *words1;
+    long_words *words;
+    short_words *words1;
     int sizelong;
     int sizeshort;
     words = struct_long_words(head, &sizelong, len_of_words, popularity);
@@ -167,7 +310,16 @@ void new_file(const char *path, LIFO *head, int len_of_words, int popularity) {
         sizelong = sizeshort;
     else
         sizeshort = sizelong;
+    int prof, amountl, amounts;
+    for (int i = 0; i < sizeshort; i++) {
+        prof = profit(head, words[i].long_word, words1[i].short_word);
+        amountl = amountlw(head, words[i].long_word);
+        amounts = amountsw(head, words1[i].short_word);
+        printf(" LONG %s am %d SHORT %s am %d PROFIT %d \n", words[i].long_word, amountl, words1[i].short_word, amounts,
+               prof);
+    }
     const char *pathnew = "C:/Users/ziray/CLionProjects/Secondterm/src/Lab2/newfile.txt";
+    free_stack(&head);
     rewrite_file(path, pathnew, words, words1, sizeshort);
 
 }
@@ -189,11 +341,12 @@ void stack(const char *path, LIFO **head) {
     int count, number_of_uniq_words = 0;
     int all_words = 0, several_len = 0;
     char *word;
+    int fpos1 = 0;
     while (1) {
-        word = word_for_stack(path, *head);
+        word = word_for_stack(path, *head, &fpos1);
         if (word == NULL)
             break;
-        count = count_word_occurrences(path, word);
+        count = count_word_occurrences(path, word, &fpos1);
         *head = create(*head, count, word);
         number_of_uniq_words++;
     }
@@ -205,7 +358,7 @@ void stack(const char *path, LIFO **head) {
     new_file(path, *head, several_len, all_words);
 }
 
-char *word_for_stack(const char *path, LIFO *head) {
+char *word_for_stack(const char *path, LIFO *head, int *fpos) {
     char *word = (char *) malloc(100 * sizeof(char));
     int flag = 0;
     FILE *file;
@@ -213,64 +366,75 @@ char *word_for_stack(const char *path, LIFO *head) {
         fprintf(stderr, "Error opening file %s\n", path);
         exit(EXIT_FAILURE);
     }
+    fseek(file, *fpos, SEEK_SET);
     while (fscanf(file, "%s", word) != EOF) {
-        if (feof(file) != 0) {
-            word = NULL;
-            break;
+        for (int i = 0; i < (int) strlen(word); i++) {
+            if (if_letter(word, i) == 0)
+                break;
+            if (i == (int) strlen(word) - 1)
+                flag = 2;
+        }
+        if (flag == 2) {
+            flag = 0;
+            *fpos = ftell(file);
+            continue;
         }
         word = only_symbols(word);
         LIFO *p = head;
-        while (1) {
-            if (p == NULL)
-                break;
+        while (p != NULL) {
             if (!strcmp(word, p->words)) {
                 p = p->next;
                 flag = 1;
-
             } else
                 p = p->next;
-
         }
         if (flag == 0)
             break;
         flag = 0;
     }
+    *fpos = ftell(file);
+    if (feof(file) != 0)
+        word = NULL;
     fclose(file);
     return word;
 }
 
-int count_word_occurrences(const char *path, char *word) {
+int count_word_occurrences(const char *path, char *word, int *fpos) {
     FILE *file;
     if ((file = fopen(path, "r")) == NULL) {
         fprintf(stderr, "Error opening file %s\n", path);
         exit(EXIT_FAILURE);
     }
-    int count = 0, word_len = (int) strlen(word);
-    char *buffer = malloc(1000);
-    while (fgets(buffer, 1000, file) != NULL) {
+    int flag = 0;
+    fseek(file, *fpos, SEEK_SET);
+    int count = 1, word_len = (int) strlen(word);
+    char *buffer = (char *) calloc(100, sizeof(char));
+    while (fscanf(file, "%s", buffer) != EOF) {
+        if (feof(file) != 0)
+            break;
+        for (int i = 0; i < (int) strlen(buffer); i++) {
+            if (if_letter(buffer, i) == 0)
+                break;
+            if (i == (int) strlen(buffer) - 1)
+                flag = 2;
+        }
+        if (flag == 2) {
+            flag = 0;
+            continue;
+        }
+        buffer = only_symbols(buffer);
         count += string_string(buffer, word_len, word);
     }
-
     fclose(file);
-
     return count;
 }
 
 int string_string(char *buffer, int word_len, char *word) {
-    int i = 1, j = 0, cnt = 0;
-    while (strstr(buffer, word) != NULL) {
-        buffer = strstr(buffer, word);
-        while (buffer[j] == word[j++] &&
-               (buffer[word_len] == ' ' || buffer[word_len] == '.' || buffer[word_len] == ',' ||
-                buffer[word_len] == '!' || buffer[word_len] == '?' || buffer[word_len] == -62 ||
-                buffer[word_len] == '\0' || buffer[word_len] == ':') && j != word_len)
-            i++;
-        if (i == word_len)
-            cnt++;
-        buffer += word_len;
-        i = 1;
-        j = 0;
-    }
-    return cnt;
-
+    int i = 0;
+    while (buffer[i] == word[i] && (word[i] != '\0' || buffer[i] != '\0'))
+        i++;
+    if (i == word_len)
+        return 1;
+    else return 0;
 }
+
