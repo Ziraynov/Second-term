@@ -1,0 +1,194 @@
+#include "Main.h"
+
+void check_path(const char *path) {
+    if (strstr(path, ".bmp") == 0 || fopen(path, "rb") == NULL) {
+        printf("Error input. Rerun program!");
+        exit(1);
+    } else
+        printf("The file on this path:\"%s\" is recognized, suitable.", path);
+}
+
+void get_file_info(char *path, bmpInfo *info) {
+    FILE *file;
+    file = fopen(path, "rb");
+    if (file == NULL) {
+        printf("FILE ERROR");
+        exit(1);
+    }
+    fread(info, sizeof(int16_t), 1, file);
+
+    fread(info, sizeof(bmpInfo), 1, file);
+    fclose(file);
+}
+
+void get_pixels(char *path, bmpInfo *info, unsigned int offset) {
+    int width = info->width;
+    int height = info->height;
+    bmpInfo a = *info;
+    pixels **ptrs = (pixels **) calloc(height, sizeof(pixels *));
+    for (int i = 0; i < height; i++) {
+        ptrs[i] = calloc(width, sizeof(pixels));
+    }
+    FILE *file = fopen(path, "rb");
+    if (file == NULL) {
+        printf("FILE ERROR");
+        exit(1);
+    }
+    fseek(file, offset, SEEK_SET);
+    int row_padding = (4 - (width % 4)) % 4;
+    for (int i = 0; i < height; i++) {
+        for (int j = 0; j < width; j++) {
+            fread(&ptrs[i][j], sizeof(pixels), 1, file);
+        }
+        if (row_padding != 0)
+            fseek(file, row_padding * 24, SEEK_CUR);
+    }
+    *info = a;
+    fclose(file);
+    menu(height, width, ptrs, info);
+}
+
+double check(double x) {
+    while (scanf_s("%f", &x) != 1) {
+        rewind(stdin);
+        fprintf(stderr, "ERROR!");
+    }
+    return x;
+}
+
+void convert_negative(int height, int width, pixels **ptrs) {
+    for (int i = 0; i < height; i++)
+        for (int j = 0; j < width; j++) {
+            ptrs[i][j].b = 255 - ptrs[i][j].b;
+            ptrs[i][j].r = 255 - ptrs[i][j].r;
+            ptrs[i][j].g = 255 - ptrs[i][j].g;
+        }
+}
+
+void convert_black_white(int height, int width, pixels **ptrs) {
+    for (int i = 0; i < height; i++) {
+        for (int j = 0; j < width; j++) {
+
+            int b = (int) ptrs[i][j].b;
+            int g = (int) ptrs[i][j].g;
+            int r = (int) ptrs[i][j].r;
+
+            if ((b + g + r) / 3 > 255 / 2) {
+                ptrs[i][j].b = 255;
+                ptrs[i][j].g = 255;
+                ptrs[i][j].r = 255;
+            } else {
+                ptrs[i][j].b = 0;
+                ptrs[i][j].g = 0;
+                ptrs[i][j].r = 0;
+            }
+
+        }
+    }
+}
+
+void gamma_correction(int height, int width, pixels **ptrs) {
+    double gamma = 1;
+    printf("Input a value of gamma:");
+    gamma = check(gamma);
+    for (int i = 0; i < height; i++) {
+        for (int j = 0; j < width; j++) {
+            double r = pow((double) ptrs[i][j].b / 255.0, gamma) * 255.0;
+            double g = pow((double) ptrs[i][j].r / 255.0, gamma) * 255.0;
+            double b = pow((double) ptrs[i][j].g / 255.0, gamma) * 255.0;
+            ptrs[i][j].r = (unsigned char) r;
+            ptrs[i][j].g = (unsigned char) g;
+            ptrs[i][j].b = (unsigned char) b;
+        }
+    }
+}
+
+
+void writeBMP(const char *fileName, bmpInfo *info, pixels **ptrs) {
+    FILE *newfile = fopen(fileName, "wb");
+    if (newfile == NULL) {
+        printf("Error: Failed to open output file.");
+        return;
+    }
+    int width = info->width;
+    int height = info->height;
+    unsigned char x = 'B';
+    fwrite(&x, sizeof(char), 1, newfile);
+    x = 'M';
+    fwrite(&x, sizeof(char), 1, newfile);
+    fwrite(info, sizeof(bmpInfo), 1, newfile);
+    for (int i = 0; i < height; i++) {
+        for (int j = 0; j < width; j++) {
+            fwrite(&ptrs[i][j], sizeof(pixels), 1, newfile);
+        }
+    }
+
+    int padding = (4 - (width * 3) % 4) % 4;
+    for (int j = 0; j < padding; j++) {
+        fputc(0x00, newfile);
+    }
+    fclose(newfile);
+}
+
+int check_for_menu(int x) {
+    while (scanf_s("%d", &x) != 1) {
+        rewind(stdin);
+        fprintf(stderr, "ERROR!");
+    }
+    return x;
+}
+
+void median_filtration(int height, int width, pixels **ptrs) {
+    pixels **pix = (pixels **) calloc(height - 2, sizeof(pixels *));
+    for (int i = 0; i < height - 2; i++) {
+        pix[i] = calloc(width - 2, sizeof(pixels));
+    }
+    for (int i = 1; i < height - 1; i++)
+        for (int j = 1; j < width - 1; j++) {
+            int sev_red = 0;
+            int sev_blue = 0;
+            int sev_green = 0;
+            for (int k = -1; k < 2; k++)
+                for (int p = -1; p < 2; p++) {
+                    sev_red+=ptrs[i+k][j+p].r;
+                    sev_green+=ptrs[i+k][j+p].g;
+                    sev_blue+=ptrs[i+k][j+p].b;
+                }
+           pix[i-1][j-1].r=sev_red/9;
+            pix[i-1][j-1].b=sev_blue/9;
+            pix[i-1][j-1].g=sev_green/9;
+        }
+
+    for (int i = 1; i < height - 1; i++)
+        for (int j = 1; j < width - 1; j++)
+            ptrs[i][j]=pix[i-1][j-1];
+
+
+}
+
+void menu(int height, int width, pixels **ptrs, bmpInfo *info) {
+    printf("1)Black and White\n2)Negative\n3)Median Filtration\n4)Gamma-correction\n");
+    int key = 0;
+    key = check_for_menu(key);
+    switch (key) {
+        case 1:
+            convert_black_white(height, width, ptrs);
+            break;
+        case 2:
+            convert_negative(height, width, ptrs);
+            break;
+        case 3:
+            median_filtration(height, width, ptrs);
+            break;
+        case 4:
+            gamma_correction(height, width, ptrs);
+            break;
+        default:
+            return;
+    }
+    writeBMP("C:/Users/ziray/CLionProjects/Secondterm/src/Lab3/new.bmp", info, ptrs);
+    for (int i = 0; i < height; i++) {
+        free(ptrs[i]);
+    }
+    free(ptrs);
+}
