@@ -30,7 +30,7 @@ typedef struct {
 
 void check_path(const char *path);
 
-double check(double x);
+void check(double *x);
 
 void convert_negative(int height, int width, pixels **ptrs);
 

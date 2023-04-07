@@ -8,6 +8,13 @@ void check_path(const char *path) {
         printf("The file on this path:\"%s\" is recognized, suitable.", path);
 }
 
+void check_bmp(unsigned char *bm) {
+    if (strstr(bm, "BM") == NULL) {
+        printf("FILE ERROR");
+        exit(1);
+    }
+}
+
 void get_file_info(char *path, bmpInfo *info) {
     FILE *file;
     file = fopen(path, "rb");
@@ -15,8 +22,9 @@ void get_file_info(char *path, bmpInfo *info) {
         printf("FILE ERROR");
         exit(1);
     }
-    fread(info, sizeof(int16_t), 1, file);
-
+    unsigned char *bm = calloc(2, sizeof(unsigned char));
+    fread(bm, sizeof(unsigned short), 1, file);
+    check_bmp(bm);
     fread(info, sizeof(bmpInfo), 1, file);
     fclose(file);
 }
@@ -48,13 +56,14 @@ void get_pixels(char *path, bmpInfo *info, unsigned int offset) {
     menu(height, width, ptrs, info);
 }
 
-double check(double x) {
-    while (scanf_s("%f", &x) != 1) {
+/*
+void check(double *x) {
+    while (scanf_s("%f", x) != 1) {
         rewind(stdin);
         fprintf(stderr, "ERROR!");
     }
-    return x;
 }
+*/
 
 void convert_negative(int height, int width, pixels **ptrs) {
     for (int i = 0; i < height; i++)
@@ -72,30 +81,23 @@ void convert_black_white(int height, int width, pixels **ptrs) {
             int b = (int) ptrs[i][j].b;
             int g = (int) ptrs[i][j].g;
             int r = (int) ptrs[i][j].r;
-
-            if ((b + g + r) / 3 > 255 / 2) {
-                ptrs[i][j].b = 255;
-                ptrs[i][j].g = 255;
-                ptrs[i][j].r = 255;
-            } else {
-                ptrs[i][j].b = 0;
-                ptrs[i][j].g = 0;
-                ptrs[i][j].r = 0;
-            }
-
+            int sum=(r+b+g)/3;
+            ptrs[i][j].b=sum;
+            ptrs[i][j].g=sum;
+            ptrs[i][j].r=sum;
         }
     }
 }
 
 void gamma_correction(int height, int width, pixels **ptrs) {
-    double gamma = 1;
+    float gamma;
     printf("Input a value of gamma:");
-    gamma = check(gamma);
+    scanf_s("%f",&gamma);
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
-            double r = pow((double) ptrs[i][j].b / 255.0, gamma) * 255.0;
-            double g = pow((double) ptrs[i][j].r / 255.0, gamma) * 255.0;
-            double b = pow((double) ptrs[i][j].g / 255.0, gamma) * 255.0;
+            double r = pow((double) ptrs[i][j].r / 255.0, (double)1/(double )gamma) * 255.0;
+            double g = pow((double) ptrs[i][j].g / 255.0, (double)1/(double )gamma) * 255.0;
+            double b = pow((double) ptrs[i][j].b / 255.0, (double)1/(double )gamma)* 255.0;
             ptrs[i][j].r = (unsigned char) r;
             ptrs[i][j].g = (unsigned char) g;
             ptrs[i][j].b = (unsigned char) b;
@@ -150,18 +152,18 @@ void median_filtration(int height, int width, pixels **ptrs) {
             int sev_green = 0;
             for (int k = -1; k < 2; k++)
                 for (int p = -1; p < 2; p++) {
-                    sev_red+=ptrs[i+k][j+p].r;
-                    sev_green+=ptrs[i+k][j+p].g;
-                    sev_blue+=ptrs[i+k][j+p].b;
+                    sev_red += ptrs[i + k][j + p].r;
+                    sev_green += ptrs[i + k][j + p].g;
+                    sev_blue += ptrs[i + k][j + p].b;
                 }
-           pix[i-1][j-1].r=sev_red/9;
-            pix[i-1][j-1].b=sev_blue/9;
-            pix[i-1][j-1].g=sev_green/9;
+            pix[i - 1][j - 1].r = sev_red / 9;
+            pix[i - 1][j - 1].b = sev_blue / 9;
+            pix[i - 1][j - 1].g = sev_green / 9;
         }
 
     for (int i = 1; i < height - 1; i++)
         for (int j = 1; j < width - 1; j++)
-            ptrs[i][j]=pix[i-1][j-1];
+            ptrs[i][j] = pix[i - 1][j - 1];
 
 
 }
