@@ -1,0 +1,116 @@
+digraph G {
+"This team in top 20 HLTV?
+"-> "This is 1st place team?
+"
+"This is 1st place team?
+"-> "G2
+"
+"This is 1st place team?
+"-> "This is top 7 team?
+"
+"This is top 7 team?
+"-> "Liquid
+"
+"This is top 7 team?
+"-> "This team playing on blast major?
+"
+"This team playing on blast major?
+"-> "This team is Ence?
+"
+"This team is Ence?
+"-> "Ence
+"
+"This team is Ence?
+"-> "This team won grandslam?
+"
+"This team won grandslam?
+"-> "This team have 3times best player of the world?
+"
+"This team have 3times best player of the world?
+"-> "Navi
+"
+"This team have 3times best player of the world?
+"-> "Faze
+"
+"This team won grandslam?
+"-> "This team is mouz?
+"
+"This team is mouz?
+"-> "Mouz
+"
+"This team is mouz?
+"-> "This team have yellow logo?
+"
+"This team have yellow logo?
+"-> "NIP
+"
+"This team have yellow logo?
+"-> "This team from brazil?
+"
+"This team from brazil?
+"-> "Furia
+"
+"This team from brazil?
+"-> "Heroic
+"
+"This team playing on blast major?
+"-> "This team is top 14?
+"
+"This team is top 14?
+"-> "Pain
+"
+"This team is top 14?
+"-> "This team won 4 majors?
+"
+"This team won 4 majors?
+"-> "Astralis
+"
+"This team won 4 majors?
+"-> "This team on logo have a dragon?
+"
+"This team on logo have a dragon?
+"-> "Spirit
+"
+"This team on logo have a dragon?
+"-> "Cloud9
+"
+"This team in top 20 HLTV?
+"-> "This team is playing on BLAST Major?
+"
+"This team is playing on BLAST Major?
+"-> "Grayhound
+"
+"This team is playing on BLAST Major?
+"-> "This is Europe Team?
+"
+"This is Europe Team?
+"-> "GamerLegion
+"
+"This is Europe Team?
+"-> "This team is playing ESEA ADVANCED?
+"
+"This team is playing ESEA ADVANCED?
+"-> "This is belarusian team?
+"
+"This is belarusian team?
+"-> "Nemiga
+"
+"This is belarusian team?
+"-> "insilio
+"
+"This team is playing ESEA ADVANCED?
+"-> "This team is sucks?
+"
+"This team is sucks?
+"-> "EG
+"
+"This team is sucks?
+"-> "This is brazilian team?
+"
+"This is brazilian team?
+"-> "Emperial
+"
+"This is brazilian team?
+"-> "1WIN
+"
+}

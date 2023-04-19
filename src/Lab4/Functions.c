@@ -1,150 +1,230 @@
 #include "Main.h"
 
-void GetMenuIndex(int *x) {
-    printf("Enter 1, if you wanna play. Enter 2,if you wanna end.");
+void Functions(int *x) {
+    printf("This is akkinator. Lets play!\n");
+    char *UserName = (char *) calloc(KB, sizeof(char));
+    GetUserName(UserName);
+    TREE *Tree = NULL;
+    FILE *Data = fopen(path, "r");
+    char *Word = (char *) calloc(KB, sizeof(char));
+    char *GetUnswer = (char *) calloc(KB, sizeof(char));
+    GetWord(Word, UserName);
+    Tree = CreateFromData(Tree, Data);
+    Diagram(Tree);
+    TreePrint(Tree, &GetUnswer, UserName);
+    fclose(Data);
+    CheckUnswer(Word, Tree, Data, GetUnswer, UserName);
+    OpenSite(UserName);
+    FreeTree(Tree);
+    free(Word);
+    GetMenuIndex(x, UserName);
+}
+
+void OpenSite(char *UserName) {
+    printf("You wanna open top 30 HLTV?\n");
+    if (GetUnswer(UserName) == 1) {
+        const char *url = "https://www.hltv.org/ranking/teams/2023/april/17";
+        char cmd[256];
+        snprintf(cmd, sizeof(cmd), "start %s", url);
+        system(cmd);
+    }
+}
+
+void GetMenuIndex(int *x, char *UserName) {
+    printf("Enter 1, if you wanna play. Enter 2,if you wanna end.\n");
     printf("Entre your choice:");
     while (scanf_s("%d", x) != 1 || getchar() != '\n' || ((*x) != 1 && (*x) != 2)) {
         printf("Error,try againg\n");
         rewind(stdin);
     }
-    printf("\n");
+    char *y = (char *) calloc(KB, sizeof(char));
+    itoa(*x, y, 10);
+    strcat(y, "\n");
+    AddLogs(y, UserName);
 }
 
-void GetWord(char *word) {
-    printf("Input your word:");
-    fgets(word, KB - 1, stdin);
+void GetWord(char *Word, char *UserName) {
+    printf("Input your csgo team:");
+    fgets(Word, KB - 1, stdin);
     rewind(stdin);
+    AddLogs(Word, UserName);
 }
 
-void GetQuestion(char *quest) {
-    fgets(quest, KB - 1, stdin);
+void GetQuestion(char *Quest, char *UserName) {
+    fgets(Quest, KB - 1, stdin);
     rewind(stdin);
+    AddLogs(Quest, UserName);
 }
 
-void MakeNewDataBase(char *quest, char *word, TREE *tree, FILE *data, char *get_unswer) {
-    if (tree != NULL) {
-        int flag = 0;
-        if (strcmp(tree->data, get_unswer) == 0 || strcmp(tree->data, get_unswer) == 0) {
-            fputs(quest, data);
-            flag = 1;
+void MakeNewDataBase(char *Quest, char *Word, TREE *Tree, FILE *Data, char *GetUnswer) {
+    if (Tree != NULL) {
+        int Flag = 0;
+        if (strcmp(Tree->data, GetUnswer) == 0 || strcmp(Tree->data, GetUnswer) == 0) {
+            fputs(Quest, Data);
+            Flag = 1;
         }
-        fputs(tree->data, data);
-        if (flag == 1)
-            fputs("#\n", data);
-        MakeNewDataBase(quest, word, tree->left, data, get_unswer);
-        fputs("#\n", data);
-        if (flag == 1) {
-            fputs(word, data);
-            fputs("#\n", data);
-            flag = 0;
+        fputs(Tree->data, Data);
+        if (Flag == 1)
+            fputs("#\n", Data);
+        MakeNewDataBase(Quest, Word, Tree->left, Data, GetUnswer);
+        fputs("#\n", Data);
+        if (Flag == 1) {
+            fputs(Word, Data);
+            fputs("#\n", Data);
         }
 
-        MakeNewDataBase(quest, word, tree->right, data, get_unswer);
+        MakeNewDataBase(Quest, Word, Tree->right, Data, GetUnswer);
     }
 
 
 }
 
-void AddNewElementInDataBase(char *word, TREE *tree, FILE *data, char *get_unswer) {
+void AddNewElementInDataBase(char *Word, TREE *Ttree, FILE *Data, char *getUnswer, char *UserName) {
     printf("So, what differences between my answer and your gues?Enter your question:\n ");
     char *quest = (char *) calloc(KB, sizeof(char));
-    GetQuestion(quest);
-    data = fopen(path, "w");
-    MakeNewDataBase(quest, word, tree, data, get_unswer);
-    fputs("#", data);
-    fclose(data);
+    GetQuestion(quest, UserName);
+    Data = fopen(path, "w");
+    MakeNewDataBase(quest, Word, Ttree, Data, getUnswer);
+    fputs("#", Data);
+    fclose(Data);
 
 }
 
-void CheckUnswer(char *word, TREE *tree, FILE *data, char *get_unswer) {
+void CheckUnswer(char *Word, TREE *Tree, FILE *Data, char *getUnswer, char *UserName) {
     printf("↑↑↑↑↑↑This this the answer↑↑↑↑↑↑\n");
-    printf("You guessed: %sThis is a right unswer?\n", word);
-    if (GetUnswer() == 0)
-        AddNewElementInDataBase(word, tree, data, get_unswer);
+    printf("You guessed: %sThis is a right unswer?\n", Word);
+    if (GetUnswer(UserName) == 0)
+        AddNewElementInDataBase(Word, Tree, Data, getUnswer, UserName);
 
 }
 
-int GetUnswer() {
+int GetUnswer(char *UserName) {
     printf("Input your unswer(Y/N)");
-    char *str = (char *) calloc(KB, sizeof(char));
-    fgets(str, KB - 1, stdin);
+    char *Str = (char *) calloc(KB, sizeof(char));
+    fgets(Str, KB - 1, stdin);
     rewind(stdin);
-    while ((int) strlen(str) != 2) {
+    while ((int) strlen(Str) != 2) {
         printf("Error, try againg!");
-        fgets(str, KB - 1, stdin);
+        fgets(Str, KB - 1, stdin);
+        AddLogs(Str, UserName);
     }
-    if (strstr(str, "Y") != 0 || strstr(str, "y") != 0) {
+    AddLogs(Str, UserName);
+    if (strstr(Str, "Y") != 0 || strstr(Str, "y") != 0) {
         return 1;
     } else
         return 0;
 
 }
 
-void TreePrint(TREE *tree, char **get_unswer) {
-    if (tree != NULL) {
-        printf("%s", tree->data);
-        if (tree->left == NULL && tree->right == NULL)
-            (*get_unswer) = tree->data;
-        if (tree->left != NULL || tree->right != NULL) {
-            int flag = GetUnswer();
+void TreePrint(TREE *Tree, char **getUnswer, char *UserName) {
+    if (Tree != NULL) {
+        printf("%s", Tree->data);
+        if (Tree->left == NULL && Tree->right == NULL)
+            (*getUnswer) = Tree->data;
+        if (Tree->left != NULL || Tree->right != NULL) {
+            int flag = GetUnswer(UserName);
             if (flag == 0)
-                TreePrint(tree->left, get_unswer);
+                TreePrint(Tree->left, getUnswer, UserName);
             if (flag == 1)
-                TreePrint(tree->right, get_unswer);
+                TreePrint(Tree->right, getUnswer, UserName);
 
         }
     }
 
 }
 
-TREE *CreateFromData(TREE *tree, FILE *data) {
-    if (feof(data) == 1) {
+TREE *CreateFromData(TREE *Tree, FILE *Data) {
+    if (feof(Data) == 1) {
         return NULL;
     }
 
-    char *str = (char *) calloc(KB, sizeof(char));
-    fgets(str, KB - 1, data);
-    if (strstr(str, "#") != 0) {
+    char *Str = (char *) calloc(KB, sizeof(char));
+    fgets(Str, KB - 1, Data);
+    if (strstr(Str, "#") != 0) {
         return NULL;
     }
-    tree = (TREE *) calloc(1, sizeof(TREE));
-    tree->data = str;
-    tree->left = NULL;
-    tree->right = NULL;
-    tree->left = CreateFromData(tree->left, data);
-    tree->right = CreateFromData(tree->right, data);
-    return tree;
+    Tree = (TREE *) calloc(1, sizeof(TREE));
+    Tree->data = Str;
+    Tree->left = NULL;
+    Tree->right = NULL;
+    Tree->left = CreateFromData(Tree->left, Data);
+    Tree->right = CreateFromData(Tree->right, Data);
+    return Tree;
 }
 
-void FreeTree(TREE *tree) {
-    if (tree->right == NULL || tree->left == NULL) {
-        free(tree->data);
-        free(tree);
+void FreeTree(TREE *Tree) {
+    if (Tree->right == NULL || Tree->left == NULL) {
+        free(Tree->data);
+        free(Tree);
         return;
     }
 
-    FreeTree(tree->left);
-    FreeTree(tree->right);
+    FreeTree(Tree->left);
+    FreeTree(Tree->right);
 
-    free(tree->data);
-    free(tree);
+    free(Tree->data);
+    free(Tree);
 }
 
-void dot(TREE *node, FILE *fp) {
+void dot(TREE *Tree, FILE *file) {
 
-    if (node) {
-        if (node->right != NULL) fprintf(fp, "\"%s\"-> \"%s\"\n", node->data, node->right->data);
-        dot(node->right, fp);
-        if (node->left != NULL) fprintf(fp, "\"%s\"-> \"%s\"\n", node->data, node->left->data);
-        dot(node->left, fp);
+    if (Tree) {
+        if (Tree->right != NULL) fprintf(file, "\"%s\"-> \"%s\"\n", Tree->data, Tree->right->data);
+        dot(Tree->right, file);
+        if (Tree->left != NULL) fprintf(file, "\"%s\"-> \"%s\"\n", Tree->data, Tree->left->data);
+        dot(Tree->left, file);
     }
 
 }
 
-void diagram(TREE *node) {
+void Diagram(TREE *Tree) {
     FILE *fp = fopen("../src/lab4/tree.dot", "w");
     fputs("digraph G {\n", fp);
-    dot(node, fp);
+    dot(Tree, fp);
     fputs("}\n", fp);
     fclose(fp);
+}
+
+void AddLogs(char *UserUnswer, char *UserName) {
+    FILE *logs;
+    errno_t err_file = fopen_s(&logs, "C:\\Users\\ziray\\CLionProjects\\Secondterm\\src\\Lab4\\Loggs.txt", "a+");
+    if (err_file != 0) {
+        printf("Cant open file");
+        exit(err_file);
+    }
+
+    char *str_log = (char *) calloc(KB, sizeof(char));
+    if (str_log != NULL) {
+        time_t mytime = time(NULL);
+        struct tm *now = localtime(&mytime);
+        char str[15];
+        strftime(str, sizeof(str), "%x", now);
+
+        char data[] = "Data:";
+        strcat(str_log, data);
+        strcat(str_log, str);
+        strcat(str_log, SPACE);
+
+        strftime(str, sizeof(str), "%X", now);
+
+        char time[] = "Time:";
+        strcat(str_log, time);
+        strcat(str_log, str);
+        strcat(str_log, SPACE);
+
+        strcat(str_log, UserName);
+        char answer[] = " says:";
+        strcat(str_log, answer);
+        strcat(str_log, UserUnswer);
+
+        fputs(str_log, logs);
+        free(str_log);
+        fclose(logs);
+    }
+}
+
+void GetUserName(char *Name) {
+    printf("Enter a user Name:\n");
+    fgets(Name, KB - 1, stdin);
+    rewind(stdin);
 }
