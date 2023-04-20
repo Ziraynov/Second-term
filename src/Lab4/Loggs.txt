@@ -1,0 +1,58 @@
+Data:04/21/23 Time:12:35:36 ov
+ says:G2
+Data:04/21/23 Time:12:35:38 ov
+ says:y
+Data:04/21/23 Time:12:35:39 ov
+ says:y
+Data:04/21/23 Time:12:35:41 ov
+ says:y
+Data:04/21/23 Time:12:35:41 ov
+ says:y
+Data:04/21/23 Time:13:25:51 Vova
+ says:BNE
+Data:04/21/23 Time:13:26:03 Vova
+ says:n
+Data:04/21/23 Time:13:26:25 Vova
+ says:n
+Data:04/21/23 Time:13:26:58 Vova
+ says:BNE
+Data:04/21/23 Time:13:27:02 Vova
+ says:n
+Data:04/21/23 Time:13:27:11 Vova
+ says:y
+Data:04/21/23 Time:13:27:35 Vova
+ says:NBE
+Data:04/21/23 Time:13:27:37 Vova
+ says:n
+Data:04/21/23 Time:13:27:39 Vova
+ says:y
+Data:04/21/23 Time:13:27:43 Vova
+ says:n
+Data:04/21/23 Time:13:28:45 Vova
+ says:THis team played on 3rd last mejors?
+Data:04/21/23 Time:13:28:48 Vova
+ says:y
+Data:04/21/23 Time:13:29:00 Vova
+ says:2
+Data:04/21/23 Time:19:09:05 Vova
+ says:Navi
+Data:04/21/23 Time:19:09:07 Vova
+ says:y
+Data:04/21/23 Time:19:09:09 Vova
+ says:n
+Data:04/21/23 Time:19:09:10 Vova
+ says:n
+Data:04/21/23 Time:19:09:12 Vova
+ says:y
+Data:04/21/23 Time:19:09:13 Vova
+ says:n
+Data:04/21/23 Time:19:09:14 Vova
+ says:y
+Data:04/21/23 Time:19:09:16 Vova
+ says:y
+Data:04/21/23 Time:19:09:17 Vova
+ says:y
+Data:04/21/23 Time:19:09:18 Vova
+ says:n
+Data:04/21/23 Time:19:09:20 Vova
+ says:2

@@ -2,27 +2,30 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <limits.h>
 #define path "C:/Users/ziray/CLionProjects/Secondterm/src/Lab4/data.txt"
 #define KB 1024
 #define SPACE " "
+
+
 typedef struct Tree {
 
     char *data;
     struct Tree *right;
     struct Tree *left;
 } TREE;
-void GetUserName(char *Name);
-void AddLogs(char *UserUnswer, char *UserName);
-void Functions(int *x);
-void OpenSite(char *UserName);
-void Diagram(TREE *Tree);
-void GetMenuIndex(int *x,char *UserName);
-void FreeTree(TREE* Tree);
-void MakeNewDataBase(char *Quest, char *Word, TREE *Tree, FILE *Data, char *GetUnswer);
-void GetQuestion(char *Quest, char *UserName);
-void AddNewElementInDataBase(char *Word, TREE *Ttree, FILE *Data, char *getUnswer, char *UserName);
-int GetUnswer(char *UserName);
-void CheckUnswer(char *Word, TREE *Tree, FILE *Data, char *getUnswer, char *UserName);
-void GetWord(char *Word, char *UserName);
-void TreePrint(TREE *Tree, char **getUnswer, char *UserName);
-TREE* CreateFromData(TREE *Tree, FILE *Data);
+void getUserName(char *Name);
+void addLogs(char *UserUnswer, char *UserName);
+void functions(int *x);
+void openSite(char *UserName);
+void diagram(TREE *Tree);
+void getMenuIndex(int *x, char *UserName);
+void freeTree(TREE* Tree);
+void makeNewDataBase(char *Quest, char *Word, TREE *Tree, FILE *Data, char *GetUnswer);
+void getQuestion(char *Quest, char *UserName);
+void addNewElementInDataBase(char *Word, TREE *Ttree, FILE *Data, char *getUnswer, char *UserName);
+int getUn(char *UserName);
+void checkUnswer(char *Word, TREE *Tree, FILE *Data, char *getUnswer, char *UserName);
+void getWord(char *Word, char *UserName);
+void treePrint(TREE *Tree, char **getUnswer, char *UserName);
+TREE* createFromData(TREE *Tree, FILE *Data);
