@@ -4362,7 +4362,7 @@
    “Well, you never stop thinking, that busy mind of yours.”
    “Isn’t it a good thing there’s someone to do some thinking now? You look up Ernestine’s itinerary, and telephone Arthur the very first thing in the morning. Have you got a pencil there?”
    “Yes.”
-   “Write down this name. Solon Schissler. That’s S, o, 1, o, n, Solon. Schissler. S, c, h, i, s, s, 1, e, r. He’s the Swedish Haven undertaker. Have Arthur call him and tell him to be ready for a call from me.”
+   “Write down this name. Solon Schissler. That’s S, o, 1, o, n, Solon. Schissler. addToCache, c, h, i, s, s, 1, e, r. He’s the Swedish Haven undertaker. Have Arthur call him and tell him to be ready for a call from me.”
    “Are you going to have the funeral here?”
    “Where else? Under the circumstances I doubt very much if Wilma will want him in her family plot, wherever that is. He belongs here, with the Lockwoods. So you tell Arthur to notify Schissler.”
    “Will it be a big funeral? A lot of people here?”
