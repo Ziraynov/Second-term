@@ -8,3 +8,4 @@ add_executable(Secondterm2l src/Lab2/Main.c src/Lab2/Main.h src/Lab2/Functions.c
 add_executable(Secondterm2la src/Lab2/secondpart/file.c src/Lab2/secondpart/file.h)
 add_executable(Secondterm3l src/Lab3/Main.c src/Lab3/Main.h src/Lab3/Functions.c)
 add_executable(Secondterm4l src/Lab4/Main.c src/Lab4/Main.h src/Lab4/Functions.c)
+add_executable(Secondterm4l src/Lab5/Main.c src/Lab5/Main.h)
