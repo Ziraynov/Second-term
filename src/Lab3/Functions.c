@@ -188,7 +188,7 @@ void menu(int height, int width, pixels **ptrs, bmpInfo *info) {
         default:
             return;
     }
-    writeBMP("C:/Users/ziray/CLionProjects/Secondterm/src/Lab3/new.bmp", info, ptrs);
+    writeBMP("C:\\Users\\user\\CLionProjects\\Secondterm\\src\\Lab3\\new.bmp", info, ptrs);
     for (int i = 0; i < height; i++) {
         free(ptrs[i]);
     }
