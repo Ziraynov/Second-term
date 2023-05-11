@@ -26,7 +26,9 @@ int if_letter(const char *word, int i) {
 
 char *only_symbols(char *buffer) {
     int word_len = (int) strlen(buffer);
-    int i = 0, flag = 0, priority = 0;
+    int i = 0;
+    int flag = 0;
+    int priority = 0;
 
     while (if_letter(buffer, i) != 0 || if_letter(buffer, word_len - 1) != 0) {
 
