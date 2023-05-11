@@ -1,3 +1,4 @@
+
 #include "Main.h"
 
 int main() {
@@ -9,7 +10,7 @@ int main() {
         x = menu(DNS, cache);
         DNS = checkFile("r+");
         if (x == 5)
-             cache = createCache();
+            cache = createCache();
     }
     fclose(DNS);
     return 0;
