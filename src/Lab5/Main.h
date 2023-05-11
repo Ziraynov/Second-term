@@ -1,13 +1,4 @@
-/*struct CASH {
-    char* id;
-    struct CASH* next;
-    struct CASH* prev;
-}typedef cash;
 
-struct HASH{
-    char* key;
-    struct CASH* id;
-}typedef hash;*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

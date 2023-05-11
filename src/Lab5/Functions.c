@@ -1,5 +1,4 @@
 #include "Main.h"
-
 cacheT *createCache() {
     cacheT *cache = malloc(sizeof(cacheT));
     cache->size = MaxCacheSize;
@@ -315,3 +314,13 @@ int menu(FILE *DNS, cacheT *cache) {
     }
     return 0;
 }
+    unsigned long hash_function(char *key) {
+        unsigned long hash = 5381;
+        int c;
+
+        while ((c = *key++) != '\0') {
+            hash = ((hash << 5) + hash) + c;
+        }
+
+        return hash;
+    }
