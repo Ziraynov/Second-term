@@ -6,7 +6,7 @@
 #define path "C://Users//user//CLionProjects//Secondterm//src//Lab5//Domens.txt"
 #define file 1
 #define KB 1024
-#define MaxCacheSize 2
+#define MaxCacheSize 3
 #define MaxLenghtDomain 70
 #define MaxLenghtIP 15
 #define YES 1
@@ -23,7 +23,7 @@ typedef struct cache {
 } cacheT;
 
 FILE *checkFile(char *mode);
-int menu(FILE *DNS,cacheT *cache);
+int menu(FILE *DNS,cacheT **cache,cacheEntryT **Head,cacheEntryT **Tail);
 cacheT *createCache();
-void foundAllIPs(FILE *DNS, cacheT *cache,int mode,char *word);
+void foundAllIPs(FILE *DNS, cacheT **cache,int mode,char *word,cacheEntryT **Head, cacheEntryT **Tail);
 

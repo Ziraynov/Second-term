@@ -7,3 +7,6 @@ facik IN CNAME faceit.com
 Vk.com IN  A 122.122.122.122
 vk IN CNAME Vk.com
 chatgpt.com IN  A 234.222.123.245
+chop IN  A 123.123.123.123
+jopa IN  A 234.234.123.123
+jopa2 IN CNAME jopa
