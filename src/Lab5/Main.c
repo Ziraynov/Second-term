@@ -11,8 +11,6 @@ int main() {
     while (x != 0) {
         x = menu(DNS, &cache,&Head,&Tail);
         DNS = checkFile("r+");
-        if (x == 5)
-            cache = createCache();
     }
     fclose(DNS);
     return 0;
