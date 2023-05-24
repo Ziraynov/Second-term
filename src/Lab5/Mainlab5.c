@@ -1,5 +1,5 @@
 
-#include "Main.h"
+#include "Mainlab5.h"
 
 int main() {
     FILE *DNS;

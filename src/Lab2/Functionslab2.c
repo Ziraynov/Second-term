@@ -1,4 +1,4 @@
-#include "Main.h"
+#include "Mainlab2.h"
 
 void print_file_size(const char *filename) {
     FILE *file = fopen(filename, "rb");

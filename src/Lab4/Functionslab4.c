@@ -1,4 +1,4 @@
-#include "Main.h"
+#include "Mainlab4.h"
 
 void functions(int *x) {
     printf("This is akkinator. Lets play!\n");

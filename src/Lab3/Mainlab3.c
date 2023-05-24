@@ -1,4 +1,4 @@
-#include "Main.h"
+#include "Mainlab3.h"
 
 int main() {
     char *path;

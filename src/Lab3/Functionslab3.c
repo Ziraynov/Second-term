@@ -1,4 +1,4 @@
-#include "Main.h"
+#include "Mainlab3.h"
 
 void check_path(const char *path) {
     if (strstr(path, ".bmp") == 0 || fopen(path, "rb") == NULL) {

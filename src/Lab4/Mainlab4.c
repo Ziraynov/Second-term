@@ -1,5 +1,5 @@
 
-#include "Main.h"
+#include "Mainlab4.h"
 
 int main() {
     int x = 1;
