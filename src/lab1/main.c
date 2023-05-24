@@ -8,7 +8,7 @@ int main()
 	const char path[] = { "C:/Users/ziray/CLionProjects/Secondterm/src/lab1/monitors.txt" };
 	int key, number = 0;
 	monitor* arr ;
-    arr  = parse_html(&path, &number);
+    arr  = parse_html(path, &number);
 	while (1)
 	{
 		printf("1. Show\n2. Add\n3. Remove\n4. Sort\n5. Exit\n");
