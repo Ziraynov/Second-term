@@ -41,11 +41,11 @@ void gamma_correction(int height, int width, pixels **ptrs);
 void menu(int height, int width, pixels **ptrs,bmpInfo *info);
 
 
-void get_file_info(char *path,bmpInfo *info);
+void get_file_info(const char *path,bmpInfo *info);
 
-void get_pixels(char *path,bmpInfo *info,unsigned int offset);
+void get_pixels(const char *path,bmpInfo *info,unsigned int offset);
 
-void writeBMP(const char *fileName, bmpInfo *info,pixels **ptrs);
+void writeBMP(const char *fileName, const bmpInfo *info,pixels **ptrs);
 
 
 

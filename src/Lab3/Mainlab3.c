@@ -5,7 +5,6 @@ int main() {
     path = (char *) calloc(1001, sizeof(char));
     printf("Input path of your bmp file: ");
     scanf("%s",path);
-    //gets_s(path, 100);
     check_path(path);
     printf("\n");
     bmpInfo *info=(bmpInfo*) calloc(1,sizeof(bmpInfo));

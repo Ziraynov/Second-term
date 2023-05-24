@@ -1,7 +1,9 @@
 #include "Mainlab3.h"
 
 void check_path(const char *path) {
-    if (strstr(path, ".bmp") == 0 || fopen(path, "rb") == NULL) {
+    FILE *file = NULL;
+    if (strstr(path, ".bmp") == 0 || fopen_s(&file, path, "rb") != 1) {
+        fclose(file);
         printf("Error input. Rerun program!");
         exit(1);
     } else
@@ -9,15 +11,15 @@ void check_path(const char *path) {
 }
 
 void check_bmp(unsigned char *bm) {
-    if (strstr(bm, "BM") == NULL) {
+    if (strstr((char *) bm, "BM") == NULL) {
         printf("FILE ERROR");
         exit(1);
     }
 }
 
-void get_file_info(char *path, bmpInfo *info) {
+void get_file_info(const char *path, bmpInfo *info) {
     FILE *file;
-    file = fopen(path, "rb");
+    fopen_s(&file, path, "rb");
     if (file == NULL) {
         printf("FILE ERROR");
         exit(1);
@@ -29,7 +31,7 @@ void get_file_info(char *path, bmpInfo *info) {
     fclose(file);
 }
 
-void get_pixels(char *path, bmpInfo *info, unsigned int offset) {
+void get_pixels(const char *path, bmpInfo *info, unsigned int offset) {
     int width = info->width;
     int height = info->height;
     bmpInfo a = *info;
@@ -37,12 +39,13 @@ void get_pixels(char *path, bmpInfo *info, unsigned int offset) {
     for (int i = 0; i < height; i++) {
         ptrs[i] = calloc(width, sizeof(pixels));
     }
-    FILE *file = fopen(path, "rb");
+    FILE *file;
+    fopen_s(&file, path, "rb");
     if (file == NULL) {
         printf("FILE ERROR");
         exit(1);
     }
-    fseek(file, offset, SEEK_SET);
+    fseek(file, (long) offset, SEEK_SET);
     int row_padding = (4 - (width % 4)) % 4;
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
@@ -56,14 +59,6 @@ void get_pixels(char *path, bmpInfo *info, unsigned int offset) {
     menu(height, width, ptrs, info);
 }
 
-/*
-void check(double *x) {
-    while (scanf_s("%f", x) != 1) {
-        rewind(stdin);
-        fprintf(stderr, "ERROR!");
-    }
-}
-*/
 
 void convert_negative(int height, int width, pixels **ptrs) {
     for (int i = 0; i < height; i++)
@@ -81,10 +76,10 @@ void convert_black_white(int height, int width, pixels **ptrs) {
             int b = (int) ptrs[i][j].b;
             int g = (int) ptrs[i][j].g;
             int r = (int) ptrs[i][j].r;
-            int sum=(r+b+g)/3;
-            ptrs[i][j].b=sum;
-            ptrs[i][j].g=sum;
-            ptrs[i][j].r=sum;
+            int sum = (r + b + g) / 3;
+            ptrs[i][j].b = (unsigned char) sum;
+            ptrs[i][j].g = (unsigned char) sum;
+            ptrs[i][j].r = (unsigned char) sum;
         }
     }
 }
@@ -92,12 +87,12 @@ void convert_black_white(int height, int width, pixels **ptrs) {
 void gamma_correction(int height, int width, pixels **ptrs) {
     float gamma;
     printf("Input a value of gamma:");
-    scanf_s("%f",&gamma);
+    scanf_s("%f", &gamma);
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
-            double r = pow((double) ptrs[i][j].r / 255.0, (double)1/(double )gamma) * 255.0;
-            double g = pow((double) ptrs[i][j].g / 255.0, (double)1/(double )gamma) * 255.0;
-            double b = pow((double) ptrs[i][j].b / 255.0, (double)1/(double )gamma)* 255.0;
+            double r = pow((double) ptrs[i][j].r / 255.0, (double) 1 / (double) gamma) * 255.0;
+            double g = pow((double) ptrs[i][j].g / 255.0, (double) 1 / (double) gamma) * 255.0;
+            double b = pow((double) ptrs[i][j].b / 255.0, (double) 1 / (double) gamma) * 255.0;
             ptrs[i][j].r = (unsigned char) r;
             ptrs[i][j].g = (unsigned char) g;
             ptrs[i][j].b = (unsigned char) b;
@@ -105,9 +100,22 @@ void gamma_correction(int height, int width, pixels **ptrs) {
     }
 }
 
+void new(int height, int width, FILE *newfile, pixels **ptrs) {
+    for (int i = 0; i < height; i++) {
+        for (int j = 0; j < width; j++) {
+            fwrite(&ptrs[i][j], sizeof(pixels), 1, newfile);
+        }
+    }
 
-void writeBMP(const char *fileName, bmpInfo *info, pixels **ptrs) {
-    FILE *newfile = fopen(fileName, "wb");
+    int padding = (4 - (width * 3) % 4) % 4;
+    for (int j = 0; j < padding; j++) {
+        fputc(0x00, newfile);
+    }
+}
+
+void writeBMP(const char *fileName, const bmpInfo *info, pixels **ptrs) {
+    FILE *newfile;
+    fopen_s(&newfile, fileName, "wb");
     if (newfile == NULL) {
         printf("Error: Failed to open output file.");
         return;
@@ -119,16 +127,7 @@ void writeBMP(const char *fileName, bmpInfo *info, pixels **ptrs) {
     x = 'M';
     fwrite(&x, sizeof(char), 1, newfile);
     fwrite(info, sizeof(bmpInfo), 1, newfile);
-    for (int i = 0; i < height; i++) {
-        for (int j = 0; j < width; j++) {
-            fwrite(&ptrs[i][j], sizeof(pixels), 1, newfile);
-        }
-    }
-
-    int padding = (4 - (width * 3) % 4) % 4;
-    for (int j = 0; j < padding; j++) {
-        fputc(0x00, newfile);
-    }
+    new(height, width, newfile, ptrs);
     fclose(newfile);
 }
 
@@ -156,9 +155,9 @@ void median_filtration(int height, int width, pixels **ptrs) {
                     sev_green += ptrs[i + k][j + p].g;
                     sev_blue += ptrs[i + k][j + p].b;
                 }
-            pix[i - 1][j - 1].r = sev_red / 9;
-            pix[i - 1][j - 1].b = sev_blue / 9;
-            pix[i - 1][j - 1].g = sev_green / 9;
+            pix[i - 1][j - 1].r = (unsigned char) sev_red / 9;
+            pix[i - 1][j - 1].b = (unsigned char) sev_blue / 9;
+            pix[i - 1][j - 1].g = (unsigned char) sev_green / 9;
         }
 
     for (int i = 1; i < height - 1; i++)
