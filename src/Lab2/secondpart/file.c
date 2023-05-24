@@ -119,7 +119,7 @@ char *replace_words(const char *buffer,const  char *lw,const char *sw) {
 
         if (((int*) strstr(buffer, lw) < (int*) strstr(buffer, sw)) && strstr(buffer, lw) != 0 ||
             (strstr(buffer, sw) == NULL && strstr(buffer, lw) != NULL)) {
-            char *start_of_longw;
+            const char *start_of_longw;
             start_of_longw = strstr(buffer, lw);
             int len = ((int) strlen(buffer) - (int) strlen(start_of_longw));
             if (if_real_word(start_of_longw, lw) == 1 && if_letter(buffer, len - 1,1) == 1) {
@@ -134,7 +134,7 @@ char *replace_words(const char *buffer,const  char *lw,const char *sw) {
         }
         if (((int*) strstr(buffer, sw) < (int*) strstr(buffer, lw)) && strstr(buffer, sw) != 0 ||
             (strstr(buffer, lw) == NULL && strstr(buffer, sw) != NULL)) {
-            char *start_of_shortw;
+        const    char *start_of_shortw;
             start_of_shortw = strstr(buffer, sw);
             int len = ((int) strlen(buffer) - (int) strlen(start_of_shortw));
             if (if_real_word(start_of_shortw, sw) == 1 && if_letter(buffer, len - 1,1) == 1) {
@@ -153,7 +153,7 @@ char *replace_words(const char *buffer,const  char *lw,const char *sw) {
     return newbuffer;
 }
 
-char *new_str(char *buffer, char *longword, char *shortword) {
+const char *new_str(const char *buffer,const  char *longword,const char *shortword) {
     char *newbuffer;
     if (strstr(buffer, longword) != NULL && strstr(buffer, shortword) != NULL) {
         newbuffer = replace_words(buffer, longword, shortword);
@@ -190,10 +190,10 @@ void decomprassing(const char *old_file, const char *new_file) {
     char *word = (char *) calloc(1, sizeof(char));
     char **words_long = (char **) calloc(1, sizeof(char *));
     char **wordss = (char **) calloc(1, sizeof(char *));
-    fscanf(file, "%s", word);
-    char *buffer = (char *) calloc(atoi(word) + 10, sizeof(char));
-    fgets(buffer, atoi(word) + 9, file);
-    word = strtok(buffer, " ");
+    fscanf_s(file, "%s", word);
+    const char *buffer = (char *) calloc(atoi(word) + 10, sizeof(char));
+    fgets((char*)buffer, atoi(word) + 9, file);
+    word = strtok_r((char*)buffer, " ",(char**)&buffer);
     while (word != NULL) {
         if (strcmp(&word[(int) strlen(word) - 1], "\n") == 0)
             word[(int) strlen(word) - 1] = '\0';
@@ -204,7 +204,7 @@ void decomprassing(const char *old_file, const char *new_file) {
             wordss = realloc(wordss, (k + 1) * sizeof(char *));
             wordss[k++] = word;
         }
-        word = strtok(NULL, " ");
+        word = strtok_r(NULL, " ",NULL);
         cnt++;
     }
     for (int i = 0; i < j; i++) {
@@ -226,7 +226,8 @@ void decomprassing(const char *old_file, const char *new_file) {
 }
 
 void print_file_size(const char *filename) {
-    FILE *file = fopen(filename, "rb");
+    FILE *file;
+    fopen_s(&file,filename, "rb");
 
     if (file == NULL) {
         printf("Ошибка при открытии файла!");

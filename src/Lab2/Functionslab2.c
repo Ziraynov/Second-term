@@ -186,7 +186,7 @@ char *replace_words(const char *buffer,const  char *lw,const char *sw) {
 
         if (((int*) strstr(buffer, lw) < (int*) strstr(buffer, sw)) && strstr(buffer, lw) != 0 ||
             (strstr(buffer, sw) == NULL && strstr(buffer, lw) != NULL)) {
-            char *start_of_longw;
+            const char *start_of_longw;
             start_of_longw = strstr(buffer, lw);
             int len = ((int) strlen(buffer) - (int) strlen(start_of_longw));
             if (if_real_word(start_of_longw, lw) == 1 && if_letter(buffer, len - 1) == 1) {
@@ -201,7 +201,7 @@ char *replace_words(const char *buffer,const  char *lw,const char *sw) {
         }
         if (((int*) strstr(buffer, sw) < (int*) strstr(buffer, lw)) && strstr(buffer, sw) != 0 ||
             (strstr(buffer, lw) == NULL && strstr(buffer, sw) != NULL)) {
-            char *start_of_shortw;
+           const  char *start_of_shortw;
             start_of_shortw = strstr(buffer, sw);
             int len = ((int) strlen(buffer) - (int) strlen(start_of_shortw));
             if (if_real_word(start_of_shortw, sw) == 1 && if_letter(buffer, len - 1) == 1) {
@@ -220,7 +220,7 @@ char *replace_words(const char *buffer,const  char *lw,const char *sw) {
     return newbuffer;
 }
 
-char *new_str(char *buffer, char *longword, char *shortword) {
+const char *new_str(const char *buffer,const  char *longword,const char *shortword) {
     char *newbuffer;
     if (strstr(buffer, longword) != NULL && strstr(buffer, shortword) != NULL) {
         newbuffer = replace_words(buffer, longword, shortword);
@@ -276,7 +276,7 @@ void rewrite_file(const char *old_file, const char *new_file, long_words *words,
     }
     fputs("\n", newfile);
     char *line = (char *) calloc(5001, sizeof(char));
-    char *buffer;
+  const  char *buffer;
     while (fgets(line, 5000, file)) {
         buffer = line;
         for (int i = 0; i < size; i++) {
