@@ -112,7 +112,7 @@ char *replace_words(char *buffer, char *lw, char *sw) {
     char *newbuffer = (char *) calloc((int) strlen(buffer) + 100, sizeof(char));
     while (strstr(buffer, lw) != NULL || strstr(buffer, sw) != NULL) {
 
-        if (((int) strstr(buffer, lw) < (int) strstr(buffer, sw)) && strstr(buffer, lw) != 0 ||
+        if (((int*)strstr(buffer, lw) < (int*) strstr(buffer, sw)) && strstr(buffer, lw) != 0 ||
             (strstr(buffer, sw) == NULL && strstr(buffer, lw) != NULL)) {
             char *start_of_longw;
             start_of_longw = strstr(buffer, lw);
@@ -127,7 +127,7 @@ char *replace_words(char *buffer, char *lw, char *sw) {
                 buffer += len + (int) strlen(lw);
             }
         }
-        if (((int) strstr(buffer, sw) < (int) strstr(buffer, lw)) && strstr(buffer, sw) != 0 ||
+        if (((int*) strstr(buffer, sw) < (int*) strstr(buffer, lw)) && strstr(buffer, sw) != 0 ||
             (strstr(buffer, lw) == NULL && strstr(buffer, sw) != NULL)) {
             char *start_of_shortw;
             start_of_shortw = strstr(buffer, sw);
