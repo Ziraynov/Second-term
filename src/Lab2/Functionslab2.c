@@ -1,7 +1,8 @@
 #include "Mainlab2.h"
 
 void print_file_size(const char *filename) {
-    FILE *file = fopen(filename, "rb");
+    FILE *file;
+    fopen_s(&file,filename, "rb");
 
     if (file == NULL) {
         printf("Ошибка при открытии файла!");
@@ -112,16 +113,16 @@ long_words *struct_long_words(LIFO *head, int *size, int len, int pop) {
     return buffer;
 }
 
-int if_real_word(char *buffer, char *word) {
-    int i, k = 0;
+int if_real_word(const char *buffer,const char *word) {
+    int k = 0;
     char *word1 = (char *) calloc((int) strlen(buffer), sizeof(char));
     char *chek_symbol = (char *) calloc((int) strlen(buffer), sizeof(char));
     while (strcmp(chek_symbol, " ") != 0) {
         if (strcmp(chek_symbol, "\n") == 0) { break; }
 
-        strncat(word1, &buffer[k], 1);
+        strncat_s(word1, 1, &buffer[k],2);
         k++;
-        strncpy(chek_symbol, &buffer[k], 1);
+        strncpy_s(chek_symbol, 1, &buffer[k],2);
     }
     if (word1[(int) strlen(word1)] == '\n')
         word1[(int) strlen(word1)] = '\0';
@@ -129,7 +130,7 @@ int if_real_word(char *buffer, char *word) {
     if ((int) strlen(word1) != (int) strlen(word))
         return 0;
     k = 0;
-    for (i = 0; i < (int) strlen(word); i++)
+    for (int i = 0; i < (int) strlen(word); i++)
         if (word1[i] == word[i])
             k++;
     if (k == (int) strlen(word))
@@ -138,7 +139,7 @@ int if_real_word(char *buffer, char *word) {
 
 }
 
-char *long_to_short(char *buffer, char *longword, char *shortword) {
+char *long_to_short(const char *buffer,const char *longword,const char *shortword) {
     char *newbuffer = (char *) calloc((int) strlen(buffer) + 100, sizeof(char));
     while (strstr(buffer, longword)) {
         char *start_of_longw;
