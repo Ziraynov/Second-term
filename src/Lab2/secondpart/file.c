@@ -190,10 +190,10 @@ void decomprassing(const char *old_file, const char *new_file) {
     char *word = (char *) calloc(2, sizeof(char));
     char **words_long = (char **) calloc(2, sizeof(char *));
     char **wordss = (char **) calloc(2, sizeof(char *));
-    fscanf_s(file, "%s", word);
+    fscanf_s(file, "%s", word,100);
     const char *buffer = (char *) calloc(atoi(word) + 10, sizeof(char));
     fgets((char*)buffer, atoi(word) + 9, file);
-    strtok_r((char*)buffer, " ",(char**)&buffer);
+    strtok_s((char*)buffer, " ",(char**)&buffer);
     while (word != NULL) {
         if (strcmp(&word[(int) strlen(word) - 1], "\n") == 0)
             word[(int) strlen(word) - 1] = '\0';
@@ -204,7 +204,7 @@ void decomprassing(const char *old_file, const char *new_file) {
             wordss = realloc(wordss, (k + 1) * sizeof(char *));
             wordss[k++] = word;
         }
-        strtok_r(word, " ",&word);
+        strtok_s(word, " ",&word);
         cnt++;
     }
     for (int i = 0; i < j; i++) {
