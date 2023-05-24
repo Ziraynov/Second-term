@@ -8,7 +8,7 @@ void functions(int *x) {
     FILE *Data;
     fopen_s(&Data,path, "r");
     char *Word = (char *) calloc(KB, sizeof(char));
-    char *GetUnswer = (char *) calloc(KB, sizeof(char));
+   const char *GetUnswer = (char *) calloc(KB, sizeof(char));
     getWord(Word, UserName);
     Tree = createFromData(Tree, Data);
     diagram(Tree);
@@ -31,7 +31,7 @@ void openSite(char *UserName) {
     }
 }
 
-void getMenuIndex(int *x, char *UserName) {
+void getMenuIndex(int *x, const char *UserName) {
     printf("Enter 1, if you wanna play. Enter 2,if you wanna end.\n");
     printf("Entre your choice:");
     while (scanf_s("%d", x) != 1 || getchar() != '\n' || ((*x) != 1 && (*x) != 2)) {
@@ -39,25 +39,25 @@ void getMenuIndex(int *x, char *UserName) {
         rewind(stdin);
     }
     char *y = (char *) calloc(KB, sizeof(char));
-    _itoa(*x, y, 10);
+    _itoa_s(*x, y,sizeof(y), 10);
     strcat_s(y,1000, "\n");
     addLogs(y, UserName);
 }
 
-void getWord(char *Word, char *UserName) {
+void getWord( char *Word,const  char *UserName) {
     printf("Input your csgo team:");
     fgets(Word, KB - 1, stdin);
     rewind(stdin);
     addLogs(Word, UserName);
 }
 
-void getQuestion(char *Quest, char *UserName) {
+void getQuestion(char *Quest, const char *UserName) {
     fgets(Quest, KB - 1, stdin);
     rewind(stdin);
     addLogs(Quest, UserName);
 }
 
-void makeNewDataBase(char *Quest, char *Word, TREE *Tree, FILE *Data, char *GetUnswer) {
+void makeNewDataBase(char *Quest, char *Word, TREE *Tree, FILE *Data,const char *GetUnswer) {
 
     if (Tree != NULL) {
         int Flag = 0;
@@ -81,7 +81,7 @@ void makeNewDataBase(char *Quest, char *Word, TREE *Tree, FILE *Data, char *GetU
 
 }
 
-void addNewElementInDataBase(char *Word, TREE *Ttree, FILE *Data, char *getUnswer, char *UserName) {
+void addNewElementInDataBase(char *Word, TREE *Ttree, FILE *Data,const char *getUnswer, const char *UserName) {
     printf("So, what differences between my answer and your gues?Enter your question:\n ");
     char *quest = (char *) calloc(KB, sizeof(char));
     getQuestion(quest, UserName);
@@ -93,7 +93,7 @@ void addNewElementInDataBase(char *Word, TREE *Ttree, FILE *Data, char *getUnswe
 
 }
 
-void checkUnswer(char *Word, TREE *Tree, FILE *Data, char *getUnswer, char *UserName) {
+void checkUnswer(char *Word, TREE *Tree, FILE *Data,const char *getUnswer, const char *UserName) {
     printf("↑↑↑↑↑↑This this the answer↑↑↑↑↑↑\n");
     printf("You guessed: %sThis is a right unswer?\n", Word);
     if (getUn(UserName) == 0)
@@ -101,7 +101,7 @@ void checkUnswer(char *Word, TREE *Tree, FILE *Data, char *getUnswer, char *User
 
 }
 
-int getUn(char *UserName) {
+int getUn(const char *UserName) {
     printf("Input your unswer(Y/N)");
     char *Str = (char *) calloc(KB, sizeof(char));
     fgets(Str, KB - 1, stdin);
@@ -119,7 +119,7 @@ int getUn(char *UserName) {
 
 }
 
-void treePrint(TREE *Tree, char **getUnswer, char *UserName) {
+void treePrint(TREE *Tree,const char **getUnswer,const char *UserName) {
     if (Tree != NULL) {
         printf("%s", Tree->data);
         if (Tree->left == NULL && Tree->right == NULL)
@@ -203,7 +203,7 @@ void addLogs(const char *UserUnswer,const char *UserName) {
     if (str_log != NULL) {
         time_t mytime = time(NULL);
         const struct tm *now=NULL;
-        localtime_s((struct tm*)now,&mytime);
+        localtime_s(now,&mytime);
         char str[15];
         strftime(str, sizeof(str), "%x", now);
         fputs("Data:", logs);

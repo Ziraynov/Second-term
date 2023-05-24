@@ -222,7 +222,7 @@ char *replace_words(const char *buffer, const char *lw, const char *sw) {
 }
 
 const char *new_str(const char *buffer, const char *longword, const char *shortword) {
-    char *newbuffer;
+    const char *newbuffer;
     if (strstr(buffer, longword) != NULL && strstr(buffer, shortword) != NULL) {
         newbuffer = replace_words(buffer, longword, shortword);
         return newbuffer;

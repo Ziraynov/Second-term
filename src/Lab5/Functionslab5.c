@@ -10,20 +10,20 @@ cacheT *createCache() {
 }
 
 void freCache(cacheT **cache, cacheEntryT **Head, cacheEntryT **Tail) {
-    cacheEntryT *tmp = *Head;
-    while (tmp != NULL) {
-        cacheEntryT *temp = tmp;
-        tmp = (tmp)->next;
+    const cacheEntryT *temp = *Head;
+
+    while (temp != NULL) {
+        temp = (temp)->next;
         //free(temp);
         temp = NULL;
-        *Tail=NULL;
+        *Tail = NULL;
     }
     free((*cache)->table);
     free(*cache);
 
 }
 
-unsigned long hashFunction4(char *str) {
+unsigned long hashFunction4(const char *str) {
     unsigned int hashval = 0;
     for (; *str != '\0'; str++) {
         hashval += *str;
@@ -31,7 +31,7 @@ unsigned long hashFunction4(char *str) {
     return hashval % MaxCacheSize;
 }
 
-unsigned long hashFunction2(char *str) {
+unsigned long hashFunction2(const char *str) {
     unsigned int hash = 0;
     while (*str) {
         hash = hash * 131 + (*str++);
@@ -39,7 +39,7 @@ unsigned long hashFunction2(char *str) {
     return hash % MaxCacheSize;
 }
 
-unsigned long hashFunction3(char *str) {
+unsigned long hashFunction3(const char *str) {
     unsigned int hash = 5381;
     int c;
 
@@ -49,7 +49,7 @@ unsigned long hashFunction3(char *str) {
     return hash % MaxCacheSize;
 }
 
-unsigned long hashFunction1(char *str) {
+unsigned long hashFunction1(const char *str) {
     unsigned int hash = 0;
     int len = (int) strlen(str);
     for (int i = 0; i < len; i++) {
@@ -63,7 +63,7 @@ unsigned long hashFunction1(char *str) {
     return hash % MaxCacheSize;
 }
 
-unsigned long hashFunction(char *key) {
+unsigned long hashFunction(const char *key) {
     unsigned long hash = MaxCacheSize;
     char *str = strdup(key);
     int c;
@@ -72,7 +72,7 @@ unsigned long hashFunction(char *key) {
     return hash % MaxCacheSize;
 }
 
-void moveToTop(cacheEntryT **Head, cacheEntryT **Tail, char *domain) {
+void moveToTop(cacheEntryT **Head, cacheEntryT **Tail, const char *domain) {
     if (strcmp((*Head)->domain, domain) == 0)
         return;
     else {
@@ -91,33 +91,11 @@ void moveToTop(cacheEntryT **Head, cacheEntryT **Tail, char *domain) {
         *Head = current;
 
     }
-}
-
-
-void addToChain(cacheEntryT *table, char *domain, const char *IP) {
-/*
-    if (table->chain == NULL) {
-
-    } else {
-        */
-/* cacheEntryT *tmp= malloc(sizeof(cacheEntryT));
-         tmp->domain=strdup(domain);
-         tmp->value=strdup(IP);
-         tmp->next=table->next;
-         tmp->prev=table->prev;
-         table->prev=NULL;
-         table->next=NULL;
-         tmp->chain=tmp;
-         tmp->chainback=NULL;
-         table->chainback=tmp;
-         tmp=table;*//*
-
-    }
-*/
 
 }
 
-int addList(cacheT **table, unsigned long hash, char *domain, const char *IP, cacheEntryT **Head, cacheEntryT **Tail) {
+int addList(cacheT **table, unsigned long hash, const char *domain, const char *IP, cacheEntryT **Head,
+            cacheEntryT **Tail) {
     if ((*table)->table[hash].domain == NULL) {
         (*table)->table[hash].domain = strdup(domain);
         (*table)->table[hash].value = strdup(IP);
@@ -141,8 +119,9 @@ int addList(cacheT **table, unsigned long hash, char *domain, const char *IP, ca
     return 0;
 }
 
-int removeLate(cacheT **table, unsigned long hash, const char *str, char *domain, const char *IP, cacheEntryT **Head,
-               cacheEntryT **Tail, unsigned long x, unsigned long y) {
+int
+removeLate(cacheT **table, unsigned long hash, const char *str, const char *domain, const char *IP, cacheEntryT **Head,
+           cacheEntryT **Tail, unsigned long x, unsigned long y) {
     if ((*table)->table[hash].next == NULL && str != NULL && (x == y)) {
         (*table)->table[hash].domain = strdup(domain);
         (*table)->table[hash].value = strdup(IP);
@@ -152,14 +131,14 @@ int removeLate(cacheT **table, unsigned long hash, const char *str, char *domain
     return 0;
 }
 
-void addToCache(cacheT **table, char *domain, const char *IP, cacheEntryT **Head, cacheEntryT **Tail) {
+void addToCache(cacheT **table, const char *domain, const char *IP, cacheEntryT **Head, cacheEntryT **Tail) {
     unsigned int hash = hashFunction(domain);
     unsigned int hash1 = hashFunction1(domain);
     unsigned int hash3 = hashFunction3(domain);
     unsigned int hash2 = hashFunction3(domain);
     unsigned int hash4 = hashFunction4(domain);
 
-    char *str = NULL;
+    const char *str = NULL;
     int flag;
     flag = addList(table, hash, domain, IP, Head, Tail);
     if (flag == 0) {
@@ -224,7 +203,7 @@ void getWord(char *word) {
     scanf("%s", word);
 }
 
-int checkInFIle(FILE *DNS, char *word) {
+int checkInFIle(FILE *DNS, const char *word) {
     fseek(DNS, 0, SEEK_SET);
     char *str = (char *) calloc(KB, sizeof(char));
     while (fgets(str, KB - 1, DNS) != NULL) {
@@ -234,7 +213,7 @@ int checkInFIle(FILE *DNS, char *word) {
     return 0;
 }
 
-int validDomain(FILE *DNS, char *word) {
+int validDomain(FILE *DNS, const char *word) {
     if ((int) strlen(word) <= MaxLenghtDomain && checkInFIle(DNS, word) == 0)
         return 1;
     return 0;
@@ -257,7 +236,7 @@ int fisrtLetter(const char *str) {
     return 0;
 }
 
-int checkNumbers(char *str) {
+int checkNumbers(const char *str) {
     if (fisrtLetter(str) == 1)
         return 0;
     if (atoi(str) >= 0 && atoi(str) <= 255)
@@ -267,9 +246,9 @@ int checkNumbers(char *str) {
 
 int findDotsNumbers(char *IP) {
     int count = 1;
-    if (checkNumbers(strtok(IP, ".")) == 0)
+    if (checkNumbers(strtok_r(IP, ".", &IP)) == 0)
         return 0;
-    while (checkNumbers(strtok(NULL, ".")) != 0) {
+    while (checkNumbers(strtok_r(NULL, ".", &IP)) != 0) {
         count++;
         if (count == 4)
             return 1;
@@ -302,7 +281,8 @@ int validIP(FILE *DNS, char *IP) {
 }
 
 void putInFile(char *word, char *IP, FILE *DNS, int mode) {
-    fclose(DNS);
+    if (DNS != NULL)
+        fclose(DNS);
     DNS = checkFile("a+");
     fputs(word, DNS);
     fputs(" IN ", DNS);
@@ -312,6 +292,7 @@ void putInFile(char *word, char *IP, FILE *DNS, int mode) {
         fputs("CNAME ", DNS);
     fputs(IP, DNS);
     fputs("\n", DNS);
+    if(DNS!=NULL)
     fclose(DNS);
 }
 

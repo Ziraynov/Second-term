@@ -179,7 +179,7 @@ void median_filtration(int height, int width, pixels **ptrs) {
 
 }
 
-void menu(int height, int width, pixels **ptrs,bmpInfo *info) {
+void menu(int height, int width, pixels **ptrs,const bmpInfo *info) {
     printf("1)Black and White\n2)Negative\n3)Median Filtration\n4)Gamma-correction\n");
     int key = 0;
     key = check_for_menu(key);

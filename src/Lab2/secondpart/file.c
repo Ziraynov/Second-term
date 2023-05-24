@@ -154,7 +154,7 @@ char *replace_words(const char *buffer,const  char *lw,const char *sw) {
 }
 
 const char *new_str(const char *buffer,const  char *longword,const char *shortword) {
-    char *newbuffer;
+    const char *newbuffer;
     if (strstr(buffer, longword) != NULL && strstr(buffer, shortword) != NULL) {
         newbuffer = replace_words(buffer, longword, shortword);
         return newbuffer;
@@ -215,7 +215,7 @@ void decomprassing(const char *old_file, const char *new_file) {
     while (fgets(line, 5000, file)) {
         buffer = line;
         for (int i = 0; i < j; i++) {
-            buffer = (char*)new_str(buffer, words_long[i], wordss[i]);
+            buffer = new_str(buffer, words_long[i], wordss[i]);
         }
         fputs(buffer, newfile);
     }
