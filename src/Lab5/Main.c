@@ -13,5 +13,6 @@ int main() {
         DNS = checkFile("r+");
     }
     fclose(DNS);
+    freCache(&cache,&Head,&Tail);
     return 0;
 }

@@ -10,3 +10,5 @@ chatgpt.com IN  A 234.222.123.245
 chop123 IN  A 144.111.144.111
 chop99 IN  A 001.001.001.001
 chop44 IN CNAME chop99
+youtube.com IN  A 001.001.002.003
+tube IN CNAME youtube.com

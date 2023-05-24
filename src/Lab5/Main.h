@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include <openacc.h>
 #define path "C://Users//user//CLionProjects//Secondterm//src//Lab5//Domens.txt"
 #define file 1
 #define KB 1024
@@ -27,3 +26,4 @@ FILE *checkFile(char *mode);
 int menu(FILE *DNS,cacheT **cache,cacheEntryT **Head,cacheEntryT **Tail);
 cacheT *createCache();
 char *getFromFile(char *word, FILE *DNS,int mode, cacheT **cache, cacheEntryT **Head, cacheEntryT **Tail);
+void freCache(cacheT **cache,cacheEntryT **Head,cacheEntryT **Tail);
