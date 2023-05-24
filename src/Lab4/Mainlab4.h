@@ -15,7 +15,7 @@ typedef struct Tree {
     struct Tree *left;
 } TREE;
 void getUserName(char *Name);
-void addLogs(char *UserUnswer, char *UserName);
+void addLogs(const char *UserUnswer,const char *UserName);
 void functions(int *x);
 void openSite(char *UserName);
 void diagram(TREE *Tree);

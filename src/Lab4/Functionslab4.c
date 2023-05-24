@@ -5,7 +5,8 @@ void functions(int *x) {
     char *UserName = (char *) calloc(KB, sizeof(char));
     getUserName(UserName);
     TREE *Tree = NULL;
-    FILE *Data = fopen(path, "r");
+    FILE *Data;
+    fopen_s(&Data,path, "r");
     char *Word = (char *) calloc(KB, sizeof(char));
     char *GetUnswer = (char *) calloc(KB, sizeof(char));
     getWord(Word, UserName);
@@ -38,8 +39,8 @@ void getMenuIndex(int *x, char *UserName) {
         rewind(stdin);
     }
     char *y = (char *) calloc(KB, sizeof(char));
-    itoa(*x, y, 10);
-    strcat(y, "\n");
+    _itoa_s(*x, y,1000, 10);
+    strcat_s(y,1000, "\n");
     addLogs(y, UserName);
 }
 
@@ -84,9 +85,11 @@ void addNewElementInDataBase(char *Word, TREE *Ttree, FILE *Data, char *getUnswe
     printf("So, what differences between my answer and your gues?Enter your question:\n ");
     char *quest = (char *) calloc(KB, sizeof(char));
     getQuestion(quest, UserName);
-    Data = fopen(path, "w");
+    fopen_s(&Data,path, "w");
     makeNewDataBase(quest, Word, Ttree, Data, getUnswer);
     fputs("#", Data);
+    if(Data==NULL)
+        exit(1);
     fclose(Data);
 
 }
@@ -135,6 +138,8 @@ void treePrint(TREE *Tree, char **getUnswer, char *UserName) {
 }
 
 TREE *createFromData(TREE *Tree, FILE *Data) {
+    if(Data==NULL)
+        exit(1);
     if (feof(Data) == 1) {
         return NULL;
     }
@@ -178,14 +183,17 @@ void dot(TREE *Tree, FILE *file) {
 }
 
 void diagram(TREE *Tree) {
-    FILE *fp = fopen("../src/lab4/tree.dot", "w");
+    FILE *fp;
+    fopen_s(&fp,"../src/lab4/tree.dot", "w");
     fputs("digraph G {\n", fp);
     dot(Tree, fp);
     fputs("}\n", fp);
+    if(fp==NULL)
+        exit(1);
     fclose(fp);
 }
 
-void addLogs(char *UserUnswer, char *UserName) {
+void addLogs(const char *UserUnswer,const char *UserName) {
     FILE *logs;
     errno_t ErrFile = fopen_s(&logs, "C:\\Users\\ziray\\CLionProjects\\Secondterm\\src\\Lab4\\Loggs.txt", "a+");
     if (ErrFile != 0) {
@@ -195,7 +203,8 @@ void addLogs(char *UserUnswer, char *UserName) {
     char *str_log = (char *) calloc(KB, sizeof(char));
     if (str_log != NULL) {
         time_t mytime = time(NULL);
-        struct tm *now = localtime(&mytime);
+        const struct tm *now=NULL;
+        localtime_s((struct tm*)now,&mytime);
         char str[15];
         strftime(str, sizeof(str), "%x", now);
         fputs("Data:", logs);

@@ -38,7 +38,7 @@ void convert_black_white(int height, int width, pixels **ptrs);
 
 void gamma_correction(int height, int width, pixels **ptrs);
 
-void menu(int height, int width, pixels **ptrs,bmpInfo *info);
+void menu(int height, int width, pixels **ptrs,const bmpInfo *info);
 
 
 void get_file_info(const char *path,bmpInfo *info);
