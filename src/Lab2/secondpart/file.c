@@ -204,7 +204,7 @@ void decomprassing(const char *old_file, const char *new_file) {
             wordss = realloc(wordss, (k + 1) * sizeof(char *));
             wordss[k++] = word;
         }
-        strtok_r(NULL, " ",&word);
+        strtok_r(word, " ",&word);
         cnt++;
     }
     for (int i = 0; i < j; i++) {
