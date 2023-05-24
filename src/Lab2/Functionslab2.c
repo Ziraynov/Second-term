@@ -23,7 +23,23 @@ int if_letter(const char *word, int i) {
     return 1;
 
 }
+void check (char *buffer,int i,int *flag,int priority,int word_len)
+{
+    if (if_letter(buffer, i) != 0) {
+        *flag = 1;
+        priority = 1;
+    }
+    if (if_letter(buffer, word_len - 1) != 0)
+        *flag = 2;
 
+    if (*flag == 1 || priority == 1)
+        while (if_letter(buffer, i) != 0) {
+            for (int k = 0; k < word_len - 1; k++)
+                buffer[k] = buffer[k + 1];
+            buffer[word_len--] = '\0';
+
+        }
+}
 char *only_symbols(char *buffer) {
     int word_len = (int) strlen(buffer);
     int i = 0;
@@ -32,20 +48,7 @@ char *only_symbols(char *buffer) {
 
     while (if_letter(buffer, i) != 0 || if_letter(buffer, word_len - 1) != 0) {
 
-        if (if_letter(buffer, i) != 0) {
-            flag = 1;
-            priority = 1;
-        }
-        if (if_letter(buffer, word_len - 1) != 0)
-            flag = 2;
-
-        if (flag == 1 || priority == 1)
-            while (if_letter(buffer, i) != 0) {
-                for (int k = 0; k < word_len - 1; k++)
-                    buffer[k] = buffer[k + 1];
-                buffer[word_len--] = '\0';
-
-            }
+       check(buffer,i,&flag,priority,word_len);
         if (flag == 2)
             while (if_letter(buffer, word_len - 1) != 0) {
                 buffer[--word_len] = '\0';
