@@ -154,7 +154,7 @@ char *replace_words(const char *buffer,const  char *lw,const char *sw) {
 }
 
 const char *new_str(const char *buffer,const  char *longword,const char *shortword) {
-    const char *newbuffer;
+    char *newbuffer;
     if (strstr(buffer, longword) != NULL && strstr(buffer, shortword) != NULL) {
         newbuffer = replace_words(buffer, longword, shortword);
         return newbuffer;
@@ -192,8 +192,8 @@ void decomprassing(const char *old_file, const char *new_file) {
     char **wordss = (char **) calloc(2, sizeof(char *));
     fscanf_s(file, "%s", word,100);
      char *buffer = (char *) calloc(atoi(word) + 10, sizeof(char));
-    fgets((char*)buffer, atoi(word) + 9, file);
-    strtok_s((char*)buffer, " ",(char**)&buffer);
+    fgets(buffer, atoi(word) + 9, file);
+    strtok_s(buffer, " ",&buffer);
     while (word != NULL) {
         if (strcmp(&word[(int) strlen(word) - 1], "\n") == 0)
             word[(int) strlen(word) - 1] = '\0';

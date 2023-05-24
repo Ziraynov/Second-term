@@ -3,11 +3,12 @@
 void check_path(const char *path) {
     FILE *file = NULL;
     if (strstr(path, ".bmp") == 0 || fopen_s(&file, path, "rb") != 1) {
-        if(file==NULL)
+        if (file != NULL) {
+            fclose(file);
+            printf("Error input. Rerun program!");
             exit(1);
-        fclose(file);
-        printf("Error input. Rerun program!");
-        exit(1);
+        } else
+            exit(1);
 
     } else
         printf("The file on this path:\"%s\" is recognized, suitable.", path);
@@ -141,31 +142,36 @@ int check_for_menu(int x) {
     }
     return x;
 }
-void med(int height,int width,pixels **ptrs,pixels **pix)
-{
+
+void ed2(int i, int j, int sev_red, int sev_blue, int sev_green, pixels **ptrs, pixels **pix) {
+    for (int k = -1; k < 2; k++)
+        for (int p = -1; p < 2; p++) {
+            sev_red += ptrs[i + k][j + p].r;
+            sev_green += ptrs[i + k][j + p].g;
+            sev_blue += ptrs[i + k][j + p].b;
+        }
+    pix[i - 1][j - 1].r = (unsigned char) sev_red / 9;
+    pix[i - 1][j - 1].b = (unsigned char) sev_blue / 9;
+    pix[i - 1][j - 1].g = (unsigned char) sev_green / 9;
+}
+
+void med(int height, int width, pixels **ptrs, pixels **pix) {
 
     for (int i = 1; i < height - 1; i++)
         for (int j = 1; j < width - 1; j++) {
             int sev_red = 0;
             int sev_blue = 0;
             int sev_green = 0;
-            for (int k = -1; k < 2; k++)
-                for (int p = -1; p < 2; p++) {
-                    sev_red += ptrs[i + k][j + p].r;
-                    sev_green += ptrs[i + k][j + p].g;
-                    sev_blue += ptrs[i + k][j + p].b;
-                }
-            pix[i - 1][j - 1].r = (unsigned char) sev_red / 9;
-            pix[i - 1][j - 1].b = (unsigned char) sev_blue / 9;
-            pix[i - 1][j - 1].g = (unsigned char) sev_green / 9;
+            ed2(i, j, sev_red, sev_blue, sev_green, ptrs, pix);
         }
 }
+
 void median_filtration(int height, int width, pixels **ptrs) {
     pixels **pix = (pixels **) calloc(height - 2, sizeof(pixels *));
     for (int i = 0; i < height - 2; i++) {
         pix[i] = calloc(width - 2, sizeof(pixels));
     }
-med(height,width,ptrs,pix);
+    med(height, width, ptrs, pix);
     for (int i = 1; i < height - 1; i++)
         for (int j = 1; j < width - 1; j++)
             ptrs[i][j] = pix[i - 1][j - 1];
@@ -173,7 +179,7 @@ med(height,width,ptrs,pix);
 
 }
 
-void menu(int height, int width, pixels **ptrs, const bmpInfo *info) {
+void menu(int height, int width, pixels **ptrs,bmpInfo *info) {
     printf("1)Black and White\n2)Negative\n3)Median Filtration\n4)Gamma-correction\n");
     int key = 0;
     key = check_for_menu(key);

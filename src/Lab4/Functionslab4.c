@@ -39,7 +39,7 @@ void getMenuIndex(int *x, char *UserName) {
         rewind(stdin);
     }
     char *y = (char *) calloc(KB, sizeof(char));
-    _itoa_s(*x, y,1000, 10);
+    _itoa(*x, y, 10);
     strcat_s(y,1000, "\n");
     addLogs(y, UserName);
 }
@@ -88,9 +88,8 @@ void addNewElementInDataBase(char *Word, TREE *Ttree, FILE *Data, char *getUnswe
     fopen_s(&Data,path, "w");
     makeNewDataBase(quest, Word, Ttree, Data, getUnswer);
     fputs("#", Data);
-    if(Data==NULL)
-        exit(1);
-    fclose(Data);
+    if(Data!=NULL)
+        fclose(Data);
 
 }
 
