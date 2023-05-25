@@ -246,9 +246,12 @@ int checkNumbers(const char *str) {
 
 int findDotsNumbers(char *IP) {
     int count = 1;
-    if (checkNumbers(strtok_r(IP, ".", &IP)) == 0)
+    char *str=(char*) calloc(KB,sizeof(char));
+    strtok_r(IP, ".", &str);
+    if (checkNumbers(str) == 0)
         return 0;
-    while (checkNumbers(strtok_r(NULL, ".", &IP)) != 0) {
+    strtok_r(NULL, ".", &IP);
+    while (checkNumbers(str) != 0) {
         count++;
         if (count == 4)
             return 1;

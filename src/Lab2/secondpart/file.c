@@ -213,11 +213,11 @@ void decomprassing(const char *old_file, const char *new_file) {
 
     char *line = (char *) calloc(5001, sizeof(char));
     while (fgets(line, 5000, file)) {
-        buffer = line;
+        const char *buffer1 = line;
         for (int i = 0; i < j; i++) {
-            buffer = new_str(buffer, words_long[i], wordss[i]);
+            buffer1 = new_str(buffer1, words_long[i], wordss[i]);
         }
-        fputs(buffer, newfile);
+        fputs(buffer1, newfile);
     }
     fclose(file);
     fclose(newfile);

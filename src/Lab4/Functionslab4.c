@@ -203,7 +203,7 @@ void addLogs(const char *UserUnswer,const char *UserName) {
     if (str_log != NULL) {
         time_t mytime = time(NULL);
         const struct tm *now=NULL;
-        localtime_s(now,&mytime);
+        localtime_s((struct tm*)now,&mytime);
         char str[15];
         strftime(str, sizeof(str), "%x", now);
         fputs("Data:", logs);
