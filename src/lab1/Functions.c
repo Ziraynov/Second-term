@@ -158,13 +158,14 @@ void rem(monitor *arr, int *len) {
 
 char *file(const char *path) {
     FILE *fp;
-    long len=0;
+    long len;
     fopen_s(&fp, path, "r");
-    if (fp != NULL)
+    if (fp != NULL) {
         fseek(fp, 0, SEEK_END);
-    if (fp != NULL)
-         len = ftell(fp);
-    fseek(fp, 0, SEEK_SET);
+        len = ftell(fp);
+        fseek(fp, 0, SEEK_SET);
+    } else
+        exit(1);
     char *buffer = calloc(len + 2, sizeof(char));
     fread(buffer, 1, len, fp);
     buffer[len + 1] = '\0';
