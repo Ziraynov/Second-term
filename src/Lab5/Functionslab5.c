@@ -472,6 +472,7 @@ int findIpInFile(FILE *DNS, const char *IP) {
     char *word = (char *) calloc(KB, sizeof(char *));
     if (validIP(DNS, _strdup(IP)) == 2 || validIP(DNS, _strdup(IP)) == 0) {
         free((char *) IP);
+        free(_strdup(IP));
         free(word);
         return 0;
     }
@@ -479,9 +480,12 @@ int findIpInFile(FILE *DNS, const char *IP) {
     while (feof(DNS) == 0) {
         fscanf_s(DNS, "%s", word, 1000);
         if (strcmp(IP, word) == 0) {
+            free(word);
+            word=NULL;
             return 1;
         }
     }
+    free(word);
     return 0;
 }
 
@@ -495,14 +499,20 @@ void foundAllDomains(FILE *DNS) {
         while (fgets(buffer, KB - 1, DNS) != NULL) {
 
             if (strstr(buffer, word) != NULL) {
+                free(word);
+                word=NULL;
                 strtok_s(buffer, " ", &buffer);
                 printf("Domain:%s\n", buffer);
                 word = _strdup(buffer);
+                free(buffer);
+                buffer=NULL;
 
             }
         }
         free(word);
+        word=NULL;
         free(buffer);
+        buffer=NULL;
     } else {
         free(buffer);
         free(word);

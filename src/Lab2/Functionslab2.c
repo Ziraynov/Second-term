@@ -409,8 +409,8 @@ void compression(const char *path, LIFO **head) {
     free(word);
     printf_stack(*head, &all_words, &several_len);
     printf("\nALL WORDS:%d UNIQ: %d SEV_LEN%d sevpop %d \n", all_words, number_of_uniq_words,
-           several_len / number_of_uniq_words+1,
-           all_words / number_of_uniq_words+1);
+           several_len / (number_of_uniq_words+1),
+           all_words / (number_of_uniq_words+1));
     fclose(file);
-    new_file(path, *head, several_len / number_of_uniq_words+1, all_words / number_of_uniq_words+1);
+    new_file(path, *head, several_len / (number_of_uniq_words+1), all_words / (number_of_uniq_words+1));
 }
