@@ -21,7 +21,7 @@ void functions(int *x) {
     getMenuIndex(x, UserName);
 }
 
-void openSite(char *UserName) {
+void openSite(const char *UserName) {
     printf("You wanna open top 30 HLTV?\n");
     if (getUn(UserName) == 1) {
         const char *url = "https://www.hltv.org/ranking/teams/2023/april/17";

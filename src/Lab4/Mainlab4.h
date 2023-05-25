@@ -17,7 +17,7 @@ typedef struct Tree {
 void getUserName(char *Name);
 void addLogs(const char *UserUnswer,const char *UserName);
 void functions(int *x);
-void openSite(char *UserName);
+void openSite(const char *UserName);
 void diagram(TREE *Tree);
 void getMenuIndex(int *x, const char *UserName);
 void freeTree(TREE* Tree);

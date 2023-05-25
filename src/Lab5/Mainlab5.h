@@ -22,7 +22,7 @@ typedef struct cache {
     cacheEntryT* table;
 } cacheT;
 
-FILE *checkFile(char *mode);
+FILE *checkFile(const char *mode);
 int menu(FILE *DNS,cacheT **cache,cacheEntryT **Head,cacheEntryT **Tail);
 cacheT *createCache();
 char *getFromFile(char *word, FILE *DNS,int mode, cacheT **cache, cacheEntryT **Head, cacheEntryT **Tail);
