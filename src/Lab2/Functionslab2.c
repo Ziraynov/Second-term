@@ -131,8 +131,10 @@ int if_real_word(const char *buffer, const char *word) {
     if (word1[(int) strlen(word1)] == '\n')
         word1[(int) strlen(word1)] = '\0';
     word1 = only_symbols(word1);
-    if ((int) strlen(word1) != (int) strlen(word))
+    if ((int) strlen(word1) != (int) strlen(word)) {
+        free(word1);
         return 0;
+    }
     k = 0;
     for (int i = 0; i < (int) strlen(word); i++)
         if (word1[i] == word[i])
@@ -290,8 +292,8 @@ void rewrite_file(const char *old_file, const char *new_file, long_words *words,
         fputs(buffer, newfile);
     }
     free((char*)buffer);
-    free(line);
     line=NULL;
+    free(line);
     free_structl(words);
     free_structs(words1);
     fclose(file);
@@ -355,7 +357,6 @@ int get_word(char **word, int *pos, const char *path) {
     (*word) = _strdup(word1);
     *pos = ftell(file);
     free(word1);
-free(word);
     if (feof(file) != 0)
         return 0;
     fclose(file);

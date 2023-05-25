@@ -68,6 +68,7 @@ unsigned long hashFunction(const char *key) {
     while ((c = (int) (*str++)))
         hash = ((hash << 5) + hash) + c;
     free((char *) key);
+    free((char *) str);
     return hash % MaxCacheSize;
 
 }
@@ -122,7 +123,7 @@ int addList(cacheT **table, unsigned long hash, const char *domain, const char *
 int
 removeLate(cacheT **table, unsigned long hash, const char *str, const char *domain, const char *IP, cacheEntryT **Head,
            unsigned long x) {
-    if ((*table)->table[hash].next == NULL && str != NULL && x == 0) {
+    if ((*table)->table[hash].next == NULL && str != NULL && (hash == x)) {
         (*table)->table[hash].domain = _strdup(domain);
         (*table)->table[hash].value = _strdup(IP);
         moveToTop(Head, domain);
@@ -146,7 +147,7 @@ void continueadd(int *flag, cacheT **table, const char *domain, const char *IP, 
 
 void checksize(int *count, cacheEntryT **Head, char **str) {
     cacheEntryT *tmp = *Head;
-    while ((*count <= MaxCacheSize) && tmp != NULL) {
+    while (tmp != NULL) {
         (*count)++;
         if (*count == MaxCacheSize)
             *str = tmp->domain;
@@ -161,13 +162,13 @@ void changecache(int *flag, cacheT **table, const char *domain, const char *IP, 
     unsigned int hash3 = hashFunction3(domain);
     unsigned int hash4 = hashFunction4(domain);
 
-    *flag = removeLate(table, hash1, str, domain, IP, Head, (hashFunction1(str) < hashFunction1(domain)));
+    *flag = removeLate(table, hash1, str, domain, IP, Head, hashFunction1(str));
     if (*flag != 1)
-        *flag = removeLate(table, hash3, str, domain, IP, Head, (hashFunction3(str) < hashFunction3(domain)));
+        *flag = removeLate(table, hash3, str, domain, IP, Head, hashFunction3(str));
     if (*flag != 1)
-        *flag = removeLate(table, hash2, str, domain, IP, Head, (hashFunction2(str) < hashFunction2(domain)));
+        *flag = removeLate(table, hash2, str, domain, IP, Head, hashFunction2(str));
     if (*flag != 1)
-        *flag = removeLate(table, hash4, str, domain, IP, Head, (hashFunction4(domain) < hashFunction4(domain)));
+        *flag = removeLate(table, hash4, str, domain, IP, Head, hashFunction4(domain));
 }
 
 void helpadd(int *flag, cacheT **table, const char *domain, const char *IP, cacheEntryT **Head, const char *str) {
@@ -251,8 +252,10 @@ void errorDomain(char **word) {
         printf("Enter new domain:");
         getWord(*word);
         free(word);
-    } else
+    } else {
         *word = NULL;
+        free(word);
+    }
 }
 
 int fisrtLetter(const char *str) {
@@ -288,8 +291,10 @@ int existingDomainIP(FILE *DNS, const char *IP) {
     char *str = (char *) calloc(KB, sizeof(char));
     while (feof(DNS) == 0) {
         fscanf_s(DNS, "%s", str, 1000);
-        if (strcmp(str, IP) == 0)
+        if (strcmp(str, IP) == 0) {
+            free(str);
             return 1;
+        }
         for (int i = 0; i <= 2; i++)
             fscanf_s(DNS, "%s", str, 1000);
 
@@ -344,19 +349,31 @@ void add(FILE *DNS, cacheT **cache, cacheEntryT **Head, cacheEntryT **Tail) {
     if (validIP(DNS, str) == 0) {
         free(str3);
         free(str);
-        free(word);
         free(str2);
+        str3=NULL;
+        str=NULL;
+        str2=NULL;
         printf("This IP is not valid or we already have it.\n");
     } else if (validIP(DNS, str2) == 1) {
+        free(str);
+        str=NULL;
+        free(str2);
+        str2=NULL;
         putInFile(word, IP, DNS, 0);
         addToCache(cache, word, IP, Head, Tail);
+        free(word);
+        word = NULL;
     } else {
         if (validIP(DNS, str3) == 2) {
             putInFile(word, IP, DNS, 1);
             getFromFile(word, DNS, YES, cache, Head, Tail);
         }
     }
+    free(word);
     free(IP);
+    free(str);
+    free(str3);
+    free(str2);
 }
 
 char *get(cacheT *cache, const char *key, unsigned long hash) {
@@ -454,7 +471,7 @@ void showCache(cacheEntryT *Head) {
 int findIpInFile(FILE *DNS, const char *IP) {
     char *word = (char *) calloc(KB, sizeof(char *));
     if (validIP(DNS, _strdup(IP)) == 2 || validIP(DNS, _strdup(IP)) == 0) {
-        free((char*)IP);
+        free((char *) IP);
         free(word);
         return 0;
     }

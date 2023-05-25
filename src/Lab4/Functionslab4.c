@@ -132,6 +132,8 @@ void treePrint(TREE *Tree, const char **getUnswer, const char *UserName) {
         printf("%s", Tree->data);
         if (Tree->left == NULL && Tree->right == NULL) {
             (*getUnswer) = Tree->data;
+            free(getUnswer);
+            getUnswer=NULL;
         }
         if (Tree->left != NULL || Tree->right != NULL) {
             int flag = getUn(UserName);
@@ -143,7 +145,6 @@ void treePrint(TREE *Tree, const char **getUnswer, const char *UserName) {
                 treePrint(Tree->right, getUnswer, UserName);
 
         }
-        free(getUnswer);
 
     }
 }
