@@ -233,21 +233,21 @@ int fisrtLetter(const char *str) {
     return 0;
 }
 
-int checkNumbers(const char *str) {
-    if (fisrtLetter(str) == 1)
+int checkNumbers(char *str) {
+    char *str1=(char*) calloc(KB,sizeof(char));
+    strtok_r(str,".",&str1);
+    if (fisrtLetter(str1) == 1)
         return 0;
-    if (atoi(str) >= 0 && atoi(str) <= 255)
+    if (atoi(str1) >= 0 && atoi(str1) <= 255)
         return 1;
     return 0;
 }
 
 int findDotsNumbers(char *IP) {
     int count = 1;
-    char *str=(char*) calloc(KB,sizeof(char));
-    strtok_r(IP, ".", &str);
-    if (checkNumbers(str) == 0)
+    if (checkNumbers(IP) == 0)
         return 0;
-    while (checkNumbers(str) != 0) {
+    while (checkNumbers(IP) != 0) {
         count++;
         if (count == 4)
             return 1;
