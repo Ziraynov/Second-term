@@ -284,13 +284,14 @@ void rewrite_file(const char *old_file, const char *new_file, long_words *words,
     const char *buffer=(char *) calloc(5001, sizeof(char));
     while (fgets(line, 5000, file)) {
         buffer = line;
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < size-1; i++) {
             buffer = new_str(buffer, words[i].long_word, words1[i].short_word);
         }
         fputs(buffer, newfile);
     }
     free((char*)buffer);
     free(line);
+    line=NULL;
     free_structl(words);
     free_structs(words1);
     fclose(file);
@@ -326,6 +327,7 @@ void new_file(const char *path, LIFO *head, int len_of_words, int popularity) {
     free_stack(&head);
     rewrite_file(path, pathnew, words, words1, sizeshort);
 free(words1);
+free(words);
 }
 
 void printf_stack(LIFO *head, int *all_words, int *several_len) {
@@ -353,7 +355,7 @@ int get_word(char **word, int *pos, const char *path) {
     (*word) = _strdup(word1);
     *pos = ftell(file);
     free(word1);
-
+free(word);
     if (feof(file) != 0)
         return 0;
     fclose(file);
@@ -406,8 +408,8 @@ void compression(const char *path, LIFO **head) {
     free(word);
     printf_stack(*head, &all_words, &several_len);
     printf("\nALL WORDS:%d UNIQ: %d SEV_LEN%d sevpop %d \n", all_words, number_of_uniq_words,
-           several_len / number_of_uniq_words,
+           several_len / number_of_uniq_words+1,
            all_words / number_of_uniq_words+1);
     fclose(file);
-    new_file(path, *head, several_len / number_of_uniq_words, all_words / number_of_uniq_words);
+    new_file(path, *head, several_len / number_of_uniq_words+1, all_words / number_of_uniq_words+1);
 }

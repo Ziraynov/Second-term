@@ -135,14 +135,17 @@ void treePrint(TREE *Tree, const char **getUnswer, const char *UserName) {
         }
         if (Tree->left != NULL || Tree->right != NULL) {
             int flag = getUn(UserName);
-            if (flag == 0)
+            if (flag == 0) {
                 treePrint(Tree->left, getUnswer, UserName);
+
+            }
             if (flag == 1)
                 treePrint(Tree->right, getUnswer, UserName);
 
         }
+        free(getUnswer);
+
     }
-    free(getUnswer);
 }
 
 TREE *createFromData(TREE *Tree, FILE *Data) {
