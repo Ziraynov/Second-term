@@ -12,6 +12,7 @@ int main() {
     unsigned offset=info->offset;
     get_pixels(path,info,offset);
     free(info);
+    free(path);
 
     return 0;
 }

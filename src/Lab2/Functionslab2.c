@@ -281,8 +281,9 @@ void rewrite_file(const char *old_file, const char *new_file, long_words *words,
     }
     fputs("\n", newfile);
     char *line = (char *) calloc(5001, sizeof(char));
-    const char *buffer;
+    const char *buffer=(char *) calloc(5001, sizeof(char));
     while (fgets(line, 5000, file)) {
+        free((char*)buffer);
         buffer = line;
         for (int i = 0; i < size; i++) {
             buffer = new_str(buffer, words[i].long_word, words1[i].short_word);
@@ -290,7 +291,6 @@ void rewrite_file(const char *old_file, const char *new_file, long_words *words,
         fputs(buffer, newfile);
     }
     free(line);
-    free((char*)buffer);
     free_structl(words);
     free_structs(words1);
     fclose(file);

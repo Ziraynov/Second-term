@@ -61,6 +61,7 @@ void get_pixels(const char *path, bmpInfo *info, unsigned int offset) {
     *info = a;
     fclose(file);
     menu(height, width, ptrs, info);
+    free(ptrs);
 }
 
 
@@ -176,7 +177,7 @@ void median_filtration(int height, int width, pixels **ptrs) {
         for (int j = 1; j < width - 1; j++)
             ptrs[i][j] = pix[i - 1][j - 1];
 
-
+free(pix);
 }
 
 void menu(int height, int width, pixels **ptrs,const bmpInfo *info) {
