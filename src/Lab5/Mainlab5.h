@@ -25,5 +25,5 @@ typedef struct cache {
 FILE *checkFile(const char *mode);
 int menu(FILE *DNS,cacheT **cache,cacheEntryT **Head,cacheEntryT **Tail);
 cacheT *createCache();
-char *getFromFile(char *word, FILE *DNS,int mode, cacheT **cache, cacheEntryT **Head, cacheEntryT **Tail);
+char *getFromFile(const char *word, FILE *DNS,int mode, cacheT **cache, cacheEntryT **Head, cacheEntryT **Tail);
 void freCache(cacheT **cache,cacheEntryT **Head,cacheEntryT **Tail);

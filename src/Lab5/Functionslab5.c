@@ -119,8 +119,8 @@ int addList(cacheT **table, unsigned long hash, const char *domain, const char *
 
 int
 removeLate(cacheT **table, unsigned long hash, const char *str, const char *domain, const char *IP, cacheEntryT **Head,
-           unsigned long x, unsigned long y) {
-    if ((*table)->table[hash].next == NULL && str != NULL && (x == y)) {
+           unsigned long x) {
+    if ((*table)->table[hash].next == NULL && str != NULL && x==1 ) {
         (*table)->table[hash].domain = _strdup(domain);
         (*table)->table[hash].value = _strdup(IP);
         moveToTop(Head, domain);
@@ -130,7 +130,9 @@ removeLate(cacheT **table, unsigned long hash, const char *str, const char *doma
 }
 
 void continueadd(int *flag, cacheT **table, const char *domain, const char *IP, cacheEntryT **Head, cacheEntryT **Tail,
-                 unsigned int hash2, unsigned int hash3, unsigned int hash4) {
+                 unsigned int hash2) {
+    unsigned hash3= hashFunction3(domain);
+    unsigned hash4= hashFunction4(domain);
     *flag = addList(table, hash2, domain, IP, Head, Tail);
     if (*flag != 1) {
         *flag = addList(table, hash3, domain, IP, Head, Tail);
@@ -151,22 +153,26 @@ void checksize(int *count, cacheEntryT **Head, char **str) {
     }
 }
 
-void changecache(int *flag, cacheT **table, const char *domain, const char *IP, cacheEntryT **Head, char *str,
-                 unsigned hash1, unsigned int hash2, unsigned int hash3, unsigned int hash4) {
-    *flag = removeLate(table, hash1, str, domain, IP, Head, hashFunction1(str), hashFunction1(domain));
+void changecache(int *flag, cacheT **table, const char *domain, const char *IP, cacheEntryT **Head,const char *str) {
+    unsigned int hash1= hashFunction1(domain);
+    unsigned int hash2= hashFunction2(domain);
+    unsigned int hash3= hashFunction3(domain);
+    unsigned int hash4= hashFunction4(domain);
+
+    *flag = removeLate(table, hash1, str, domain, IP, Head, (hashFunction1(str)== hashFunction1(domain)));
     if (*flag != 1)
-        *flag = removeLate(table, hash3, str, domain, IP, Head, hashFunction3(str), hashFunction3(domain));
+        *flag = removeLate(table, hash3, str, domain, IP, Head, (hashFunction3(str)== hashFunction3(domain)));
     if (*flag != 1)
-        *flag = removeLate(table, hash2, str, domain, IP, Head, hashFunction2(str), hashFunction2(domain));
+        *flag = removeLate(table, hash2, str, domain, IP, Head, (hashFunction2(str)== hashFunction2(domain)));
     if (*flag != 1)
-        *flag = removeLate(table, hash4, str, domain, IP, Head, hashFunction4(domain), hashFunction4(domain));
+        *flag = removeLate(table, hash4, str, domain, IP, Head, (hashFunction4(domain)== hashFunction4(domain)));
 }
 
-void helpadd(int *flag, cacheT **table, const char *domain, const char *IP, cacheEntryT **Head, char *str) {
+void helpadd(int *flag, cacheT **table, const char *domain, const char *IP, cacheEntryT **Head,const char *str) {
     for (int i = 0; i < MaxCacheSize; i++) {
         if (*flag == 1)
             break;
-        *flag = removeLate(table, i, str, domain, IP, Head, hashFunction4(domain), hashFunction4(domain));
+        *flag = removeLate(table, i, str, domain, IP, Head, (hashFunction4(domain)== hashFunction4(domain)));
     }
 }
 
@@ -182,16 +188,16 @@ void addToCache(cacheT **table, const char *domain, const char *IP, cacheEntryT 
     flag = addList(table, hash, domain, IP, Head, Tail);
     if (flag == 0) {
         flag = addList(table, hash1, domain, IP, Head, Tail);
-        continueadd(&flag, table, domain, IP, Head, Tail, hash2, hash3, hash4);
+        continueadd(&flag, table, domain, IP, Head, Tail, hash2);
     } else
         return;
     int count;
     checksize(&count, Head, &str);
     if (count == MaxCacheSize) {
 
-        flag = removeLate(table, hash, str, domain, IP, Head, hashFunction(str), hashFunction(domain));
+        flag = removeLate(table, hash, str, domain, IP, Head, (hashFunction(str)==hashFunction(domain)));
         if (flag != 1)
-            changecache(&flag, table, domain, IP, Head, str, hash1, hash2, hash3, hash4);
+            changecache(&flag, table, domain, IP, Head, str);
         else
             return;
         helpadd(&flag, table, domain, IP, Head, str);
@@ -372,7 +378,7 @@ char *getFromCache(cacheT *cache, const char *key) {
 
 }
 
-char *getFromFile(char *word, FILE *DNS, int mode, cacheT **cache, cacheEntryT **Head, cacheEntryT **Tail) {
+char *getFromFile(const char *word, FILE *DNS, int mode, cacheT **cache, cacheEntryT **Head, cacheEntryT **Tail) {
     fseek(DNS, 0, SEEK_SET);
     char *str = (char *) calloc(KB, sizeof(char));
     char *str2 = (char *) calloc(KB, sizeof(char));
@@ -381,7 +387,7 @@ char *getFromFile(char *word, FILE *DNS, int mode, cacheT **cache, cacheEntryT *
         for (int i = 0; i <= 2; i++)
             fscanf_s(DNS, "%s", str2,1000);
     } while (strcmp(str, word) != 0 && feof(DNS) == 0);
-    if (validIP(DNS, strdup(str2)) != 1)
+    if (validIP(DNS, _strdup(str2)) != 1)
         str2 = getFromFile(str2, DNS, NO, cache, Head, Tail);
     if (mode == 1)
         addToCache(cache, word, str2, Head, Tail);
@@ -409,7 +415,7 @@ void getIpByDomain(FILE *DNS, cacheT **cache, cacheEntryT **Head, cacheEntryT **
     printf("Enter a domain:");
     char *word = (char *) calloc(KB, sizeof(char *));
     getWord(word);
-    if (validDomain(DNS, word) == 1 || validIP(DNS, strdup(word)) == 1) {
+    if (validDomain(DNS, word) == 1 || validIP(DNS, _strdup(word)) == 1) {
         printf("Error domain!\n");
         return;
     }

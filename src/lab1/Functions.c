@@ -8,9 +8,9 @@ void get_key(int *key) {
     }
 }
 
-void find_number(int *number, char *html_string) {
-    char *buf = strstr(html_string,
-                       "class='result__attr_var  cr-result__attr_odd'>Фактическая диагональ</td><td class='result__attr_val");
+void find_number(int *number, const char *html_string) {
+    const char *buf = strstr(html_string,
+                             "class='result__attr_var  cr-result__attr_odd'>Фактическая диагональ</td><td class='result__attr_val");
     while (buf != NULL) {
         buf = strstr(strstr(buf, "class='result__attr_var '>Разрешение</td><td class='result__attr_val"),
                      "class='result__attr_var  cr-result__attr_odd'>Фактическая диагональ</td><td class='result__attr_val");
@@ -108,7 +108,8 @@ void add_word(monitor *arr, int *len) {
     printf("Input monitor [|name/matrix|price/]: ");
     rewind(stdin);
     fgets(add, 1000, stdin);
-
+    const char* str="/";
+    const char* str2="|";
     ++(*len);
 
     arr[*len - 1].name = get_the_word(&add, "|", "/");
@@ -131,8 +132,8 @@ void add_word(monitor *arr, int *len) {
     } else {
         arr[*len - 1].producer = Huawei;
     }
-    arr[*len - 1].matrix = get_the_word(&add, "/", "|");
-    arr[*len - 1].price = atof(get_the_word(&add, "|", "/"));
+    arr[*len - 1].matrix = get_the_word(&add, str, str2);
+    arr[*len - 1].price = atof(get_the_word(&add, str2, str));
 
 }
 
@@ -157,11 +158,12 @@ void rem(monitor *arr, int *len) {
 
 char *file(const char *path) {
     FILE *fp;
-    fp = fopen(path, "r");
-    fseek(fp, 0, SEEK_END);
+    fopen_s(&fp, path, "r");
+    if (fp != NULL)
+        fseek(fp, 0, SEEK_END);
     long len = ftell(fp);
     fseek(fp, 0, SEEK_SET);
-    char *buffer = calloc(len + 1, 1);
+    char *buffer = calloc(len + 2, sizeof(char));
     fread(buffer, 1, len, fp);
     buffer[len + 1] = '\0';
     fclose(fp);
@@ -173,41 +175,41 @@ int second_word(const char *pre, const char *array) {
     int count = 0;
     while (pre[count] != '\0')
         if (pre[count++] != array[i++])
-               return 0;
+            return 0;
     return 1;
 
 
 }
 
-char *get_the_word(char **doc, char *firststr, char *secondstr) {
+char *get_the_word(char **doc,const char *firststr,const char *secondstr) {
 
-    unsigned int lenfirst = strlen(firststr);
-    char *buf = strstr((*doc), firststr);
+    unsigned int lenfirst =(unsigned int) strlen(firststr);
+    const char *buf = strstr((*doc), firststr);
     if (buf == NULL)
         return 0;
-    char *buf2 = strstr(buf, secondstr);
-    unsigned int len = strlen(buf);
-    unsigned int len3 = strlen(buf2);
-    char *newstr1 = strstr((*doc), firststr);
+    const char *buf2 = strstr(buf, secondstr);
+    unsigned int len = (unsigned int)strlen(buf);
+    unsigned int len3 =(unsigned int) strlen(buf2);
+   char *newstr1 = strstr((*doc), firststr);
     char *copy_of_str = calloc(len - len3 - lenfirst, sizeof(char));
-    strncpy(copy_of_str, &newstr1[lenfirst], len - len3 - lenfirst);
+    strncpy_s(copy_of_str, strlen(&newstr1[lenfirst]),&newstr1[lenfirst], len - len3 - lenfirst);
     copy_of_str[len - len3 - lenfirst] = '\0';
     *doc = newstr1;
     return copy_of_str;
 
 }
 
-int comp_name(monitor *a, monitor *b) {
+int comp_name(const monitor *a,const  monitor *b) {
     return strcmp(a->name, b->name);
 }
 
-int comp_price(monitor *a, monitor *b) {
+int comp_price(const monitor *a,const monitor *b) {
 
     return (a->price < b->price) - (a->price > b->price);
 }
 
-int comp_producer(monitor *a, monitor *b) {
-    return a->producer - b->producer;
+unsigned int comp_producer(const monitor *a,const  monitor *b) {
+    return (a->producer) - b->producer;
 }
 
 int comp_producer_matrix(const monitor *a, const monitor *b) {
@@ -217,7 +219,7 @@ int comp_producer_matrix(const monitor *a, const monitor *b) {
     } else if (a->producer < b->producer) {
         return -1;
     } else {
-        return strcmp(a->matrix,b->matrix);
+        return strcmp(a->matrix, b->matrix);
     }
 }
 
