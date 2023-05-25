@@ -1,4 +1,4 @@
-#https://sonarcloud.io/project/overview?id=Ziraynov_Second-term
+# https://sonarcloud.io/project/overview?id=ZiraynovSecondterm123
 # Лабороторные работы ОАИП второй семестр
 
 ## Содержание:
