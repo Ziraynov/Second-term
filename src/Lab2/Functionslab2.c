@@ -127,6 +127,7 @@ int if_real_word(const char *buffer, const char *word) {
         k++;
         strncpy_s(chek_symbol, 1, &buffer[k], 2);
     }
+    free(chek_symbol);
     if (word1[(int) strlen(word1)] == '\n')
         word1[(int) strlen(word1)] = '\0';
     word1 = only_symbols(word1);
@@ -271,6 +272,7 @@ void rewrite_file(const char *old_file, const char *new_file, long_words *words,
     _itoa_s(amount, am, 100000, 10);
     fputs(am, newfile);
     fputs(" ", newfile);
+    free(am);
     for (int i = 0; i < size; i++) {
         fputs(" ", newfile);
         fputs(words[i].long_word, newfile);
@@ -287,6 +289,8 @@ void rewrite_file(const char *old_file, const char *new_file, long_words *words,
         }
         fputs(buffer, newfile);
     }
+    free(line);
+    free((char*)buffer);
     free_structl(words);
     free_structs(words1);
     fclose(file);
@@ -369,7 +373,7 @@ void compression(const char *path, LIFO **head) {
         exit(EXIT_FAILURE);
     }
     while (get_word(&word, &pos, path) != 0) {
-        for (int i = 0; i < (int) strlen(word); i++) {
+        for (int i = 0; i < (int) strlen(word)-1; i++) {
             if (if_letter(word, i) == 0)
                 break;
             if (i == (int) strlen(word) - 1)
