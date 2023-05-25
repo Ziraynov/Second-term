@@ -18,6 +18,8 @@ void print_file_size(const char *filename) {
 }
 
 int if_letter(const char *word, int i) {
+    if (i > 1024 - 1)
+        exit(1);
     if ((word[i] >= 'A' && word[i] <= 'Z') || (word[i] >= 'a' && word[i] <= 'z') ||
         (word[i] >= '0' && word[i] <= '9') || word[i] == -103)
         return 0;
@@ -357,7 +359,7 @@ void compression(const char *path, LIFO **head) {
     int number_of_uniq_words = 0;
     int all_words = 0;
     int several_len = 0;
-    char *word = (char *) malloc(100 * sizeof(char));
+    char *word = (char *) calloc(1024, sizeof(char));
     int pos = 0;
     int flag = 0;
     int flag1 = 0;
