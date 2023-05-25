@@ -122,7 +122,7 @@ int addList(cacheT **table, unsigned long hash, const char *domain, const char *
 int
 removeLate(cacheT **table, unsigned long hash, const char *str, const char *domain, const char *IP, cacheEntryT **Head,
            unsigned long x) {
-    if ((*table)->table[hash].next == NULL && str != NULL && x == 1) {
+    if ((*table)->table[hash].next == NULL && str != NULL && x == 0) {
         (*table)->table[hash].domain = _strdup(domain);
         (*table)->table[hash].value = _strdup(IP);
         moveToTop(Head, domain);
