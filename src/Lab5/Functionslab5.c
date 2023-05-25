@@ -179,16 +179,14 @@ void helpadd(int *flag, cacheT **table, const char *domain, const char *IP, cach
 void addToCache(cacheT **table, const char *domain, const char *IP, cacheEntryT **Head, cacheEntryT **Tail) {
     unsigned int hash = hashFunction(domain);
     unsigned int hash1 = hashFunction1(domain);
-    unsigned int hash3 = hashFunction3(domain);
-    unsigned int hash2 = hashFunction3(domain);
-    unsigned int hash4 = hashFunction4(domain);
+
 
     char *str = NULL;
     int flag;
     flag = addList(table, hash, domain, IP, Head, Tail);
     if (flag == 0) {
         flag = addList(table, hash1, domain, IP, Head, Tail);
-        continueadd(&flag, table, domain, IP, Head, Tail, hash2);
+        continueadd(&flag, table, domain, IP, Head, Tail, hashFunction2(domain));
     } else
         return;
     int count;
@@ -395,7 +393,7 @@ char *getFromFile(const char *word, FILE *DNS, int mode, cacheT **cache, cacheEn
 
 }
 
-void foundIP(FILE *DNS, cacheT **cache, char *word, cacheEntryT **Head, cacheEntryT **Tail) {
+void foundIP(FILE *DNS, cacheT **cache, const char *word, cacheEntryT **Head, cacheEntryT **Tail) {
     char *str1 = getFromCache(*cache, word);
     if (str1 != NULL) {
         printf("Your IP(got by cache):%s\n", str1);

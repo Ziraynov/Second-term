@@ -108,8 +108,8 @@ void add_word(monitor *arr, int *len) {
     printf("Input monitor [|name/matrix|price/]: ");
     rewind(stdin);
     fgets(add, 1000, stdin);
-    const char* str="/";
-    const char* str2="|";
+    const char *str = "/";
+    const char *str2 = "|";
     ++(*len);
 
     arr[*len - 1].name = get_the_word(&add, "|", "/");
@@ -158,10 +158,12 @@ void rem(monitor *arr, int *len) {
 
 char *file(const char *path) {
     FILE *fp;
+    long len=0;
     fopen_s(&fp, path, "r");
     if (fp != NULL)
         fseek(fp, 0, SEEK_END);
-    long len = ftell(fp);
+    if (fp != NULL)
+         len = ftell(fp);
     fseek(fp, 0, SEEK_SET);
     char *buffer = calloc(len + 2, sizeof(char));
     fread(buffer, 1, len, fp);
@@ -181,34 +183,34 @@ int second_word(const char *pre, const char *array) {
 
 }
 
-char *get_the_word(char **doc,const char *firststr,const char *secondstr) {
+char *get_the_word(char **doc, const char *firststr, const char *secondstr) {
 
-    unsigned int lenfirst =(unsigned int) strlen(firststr);
+    unsigned int lenfirst = (unsigned int) strlen(firststr);
     const char *buf = strstr((*doc), firststr);
     if (buf == NULL)
         return 0;
     const char *buf2 = strstr(buf, secondstr);
-    unsigned int len = (unsigned int)strlen(buf);
-    unsigned int len3 =(unsigned int) strlen(buf2);
-   char *newstr1 = strstr((*doc), firststr);
+    unsigned int len = (unsigned int) strlen(buf);
+    unsigned int len3 = (unsigned int) strlen(buf2);
+    char *newstr1 = strstr((*doc), firststr);
     char *copy_of_str = calloc(len - len3 - lenfirst, sizeof(char));
-    strncpy_s(copy_of_str, strlen(&newstr1[lenfirst]),&newstr1[lenfirst], len - len3 - lenfirst);
+    strncpy_s(copy_of_str, strlen(&newstr1[lenfirst]), &newstr1[lenfirst], len - len3 - lenfirst);
     copy_of_str[len - len3 - lenfirst] = '\0';
     *doc = newstr1;
     return copy_of_str;
 
 }
 
-int comp_name(const monitor *a,const  monitor *b) {
+int comp_name(const monitor *a, const monitor *b) {
     return strcmp(a->name, b->name);
 }
 
-int comp_price(const monitor *a,const monitor *b) {
+int comp_price(const monitor *a, const monitor *b) {
 
     return (a->price < b->price) - (a->price > b->price);
 }
 
-unsigned int comp_producer(const monitor *a,const  monitor *b) {
+unsigned int comp_producer(const monitor *a, const monitor *b) {
     return (a->producer) - b->producer;
 }
 
