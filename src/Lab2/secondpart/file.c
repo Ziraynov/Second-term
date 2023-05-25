@@ -61,8 +61,10 @@ int if_real_word(const char *buffer, const char *word) {
     if (word1[(int) strlen(word1)] == '\n')
         word1[(int) strlen(word1)] = '\0';
     word1 = only_symbols(word1);
-    if ((int) strlen(word1) != (int) strlen(word))
+    if ((int) strlen(word1) != (int) strlen(word)) {
+        free(word1);
         return 0;
+    }
     k = 0;
     for (int i = 0; i < (int) strlen(word); i++)
         if (word1[i] == word[i])
@@ -197,7 +199,6 @@ void decomprassing(const char *old_file, const char *new_file) {
     char *buffer = (char *) calloc(atoi(word) + 10, sizeof(char));
     fgets(buffer, atoi(word) + 9, file);
     strtok_s(buffer, " ", &buffer);
-    free(buffer);
     while (word != NULL) {
         if (strcmp(&word[(int) strlen(word) - 1], "\n") == 0)
             word[(int) strlen(word) - 1] = '\0';
@@ -214,16 +215,17 @@ void decomprassing(const char *old_file, const char *new_file) {
     for (int i = 0; i < j; i++) {
         printf(" LONG %s SHORT %s\n", words_long[i], wordss[i]);
     }
+    free(buffer);
     char *line = (char *) calloc(5001, sizeof(char));
+    const char *buffer1;
     while (fgets(line, 5000, file)) {
-        const char *buffer1;
         buffer1 = line;
         for (int i = 0; i < j; i++) {
             buffer1 = new_str(buffer1, words_long[i], wordss[i]);
         }
         fputs(buffer1, newfile);
-        free((char*)buffer1);
     }
+    free((char *) buffer1);
     free(line);
     free(wordss);
     free(words_long);

@@ -283,13 +283,13 @@ void rewrite_file(const char *old_file, const char *new_file, long_words *words,
     char *line = (char *) calloc(5001, sizeof(char));
     const char *buffer=(char *) calloc(5001, sizeof(char));
     while (fgets(line, 5000, file)) {
-        free((char*)buffer);
         buffer = line;
         for (int i = 0; i < size; i++) {
             buffer = new_str(buffer, words[i].long_word, words1[i].short_word);
         }
         fputs(buffer, newfile);
     }
+    free((char*)buffer);
     free(line);
     free_structl(words);
     free_structs(words1);
@@ -302,8 +302,8 @@ void rewrite_file(const char *old_file, const char *new_file, long_words *words,
 void free_stack(LIFO **head) {
     while (*head != NULL) {
         LIFO *tmp = *head;
-        free(tmp);
         *head = (*head)->next;
+        free(tmp);
     }
 }
 
@@ -325,7 +325,7 @@ void new_file(const char *path, LIFO *head, int len_of_words, int popularity) {
     const char *pathnew = "C:/Users/ziray/CLionProjects/Secondterm/src/Lab2/newfile.txt";
     free_stack(&head);
     rewrite_file(path, pathnew, words, words1, sizeshort);
-
+free(words1);
 }
 
 void printf_stack(LIFO *head, int *all_words, int *several_len) {
@@ -350,8 +350,9 @@ int get_word(char **word, int *pos, const char *path) {
     fseek(file, *pos, SEEK_SET);
     char *word1 = (char *) malloc(100 * sizeof(char));
     fscanf_s(file, "%99s", word1, 100);
-    (*word) = word1;
+    (*word) = _strdup(word1);
     *pos = ftell(file);
+    free(word1);
 
     if (feof(file) != 0)
         return 0;
@@ -402,10 +403,11 @@ void compression(const char *path, LIFO **head) {
         }
         flag = 0;
     }
+    free(word);
     printf_stack(*head, &all_words, &several_len);
     printf("\nALL WORDS:%d UNIQ: %d SEV_LEN%d sevpop %d \n", all_words, number_of_uniq_words,
            several_len / number_of_uniq_words,
-           all_words / number_of_uniq_words);
+           all_words / number_of_uniq_words+1);
     fclose(file);
     new_file(path, *head, several_len / number_of_uniq_words, all_words / number_of_uniq_words);
 }

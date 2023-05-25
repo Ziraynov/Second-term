@@ -67,7 +67,7 @@ unsigned long hashFunction(const char *key) {
     int c;
     while ((c = (int) (*str++)))
         hash = ((hash << 5) + hash) + c;
-    free((char*)str);
+    free((char *) key);
     return hash % MaxCacheSize;
 
 }
@@ -146,7 +146,7 @@ void continueadd(int *flag, cacheT **table, const char *domain, const char *IP, 
 
 void checksize(int *count, cacheEntryT **Head, char **str) {
     cacheEntryT *tmp = *Head;
-    while (*count < MaxCacheSize && tmp != NULL) {
+    while ((*count <= MaxCacheSize) && tmp != NULL) {
         (*count)++;
         if (*count == MaxCacheSize)
             *str = tmp->domain;
@@ -161,7 +161,7 @@ void changecache(int *flag, cacheT **table, const char *domain, const char *IP, 
     unsigned int hash3 = hashFunction3(domain);
     unsigned int hash4 = hashFunction4(domain);
 
-    *flag = removeLate(table, hash1, str, domain, IP, Head, (hashFunction1(str) <hashFunction1(domain)));
+    *flag = removeLate(table, hash1, str, domain, IP, Head, (hashFunction1(str) < hashFunction1(domain)));
     if (*flag != 1)
         *flag = removeLate(table, hash3, str, domain, IP, Head, (hashFunction3(str) < hashFunction3(domain)));
     if (*flag != 1)
@@ -174,7 +174,7 @@ void helpadd(int *flag, cacheT **table, const char *domain, const char *IP, cach
     for (int i = 0; i < MaxCacheSize; i++) {
         if (*flag == 1)
             break;
-        *flag = removeLate(table, i, str, domain, IP, Head, (hashFunction4(domain) == hashFunction4(domain)));
+        *flag = removeLate(table, i, str, domain, IP, Head, (hashFunction4(domain) < hashFunction4(domain)));
     }
 }
 
@@ -228,9 +228,12 @@ int checkInFIle(FILE *DNS, const char *word) {
     fseek(DNS, 0, SEEK_SET);
     char *str = (char *) calloc(KB, sizeof(char));
     while (fgets(str, KB - 1, DNS) != NULL) {
-        if (strstr(str, word) != NULL)
+        if (strstr(str, word) != NULL) {
+            free(str);
             return 1;
+        }
     }
+    free(str);
     return 0;
 }
 
@@ -247,6 +250,7 @@ void errorDomain(char **word) {
     if (x == 1) {
         printf("Enter new domain:");
         getWord(*word);
+        free(word);
     } else
         *word = NULL;
 }
@@ -290,6 +294,7 @@ int existingDomainIP(FILE *DNS, const char *IP) {
             fscanf_s(DNS, "%s", str, 1000);
 
     }
+    free(str);
     return 0;
 }
 
@@ -326,16 +331,23 @@ void add(FILE *DNS, cacheT **cache, cacheEntryT **Head, cacheEntryT **Tail) {
     getWord(word);
     if (validDomain(DNS, word) == 0)
         errorDomain(&word);
-    if (word == NULL)
+    if (word == NULL) {
+        free(IP);
         return;
+    }
+
     printf("Enter your IP:");
     getWord(IP);
     char *str = _strdup(IP);
     char *str2 = _strdup(IP);
     char *str3 = _strdup(IP);
-    if (validIP(DNS, str) == 0)
+    if (validIP(DNS, str) == 0) {
+        free(str3);
+        free(str);
+        free(word);
+        free(str2);
         printf("This IP is not valid or we already have it.\n");
-    else if (validIP(DNS, str2) == 1) {
+    } else if (validIP(DNS, str2) == 1) {
         putInFile(word, IP, DNS, 0);
         addToCache(cache, word, IP, Head, Tail);
     } else {
@@ -344,6 +356,7 @@ void add(FILE *DNS, cacheT **cache, cacheEntryT **Head, cacheEntryT **Tail) {
             getFromFile(word, DNS, YES, cache, Head, Tail);
         }
     }
+    free(IP);
 }
 
 char *get(cacheT *cache, const char *key, unsigned long hash) {
@@ -387,12 +400,14 @@ char *getFromFile(const char *word, FILE *DNS, int mode, cacheT **cache, cacheEn
         for (int i = 0; i <= 2; i++)
             fscanf_s(DNS, "%s", str2, 1000);
     } while (strcmp(str, word) != 0 && feof(DNS) == 0);
-    if (validIP(DNS, _strdup(str2)) != 1)
+    if (validIP(DNS, _strdup(str2)) != 1) {
         str2 = getFromFile(str2, DNS, NO, cache, Head, Tail);
-    if (mode == 1)
+    }
+    if (mode == 1) {
         addToCache(cache, word, str2, Head, Tail);
+    }
+    free(str);
     return str2;
-
 }
 
 void foundIP(FILE *DNS, cacheT **cache, const char *word, cacheEntryT **Head, cacheEntryT **Tail) {
@@ -400,6 +415,7 @@ void foundIP(FILE *DNS, cacheT **cache, const char *word, cacheEntryT **Head, ca
     if (str1 != NULL) {
         printf("Your IP(got by cache):%s\n", str1);
         addToCache(cache, word, getFromCache(*cache, word), Head, Tail);
+        free((char *) word);
     } else {
         char *str = getFromFile(word, DNS, YES, cache, Head, Tail);
         if (str == NULL) {
@@ -416,6 +432,8 @@ void getIpByDomain(FILE *DNS, cacheT **cache, cacheEntryT **Head, cacheEntryT **
     char *word = (char *) calloc(KB, sizeof(char *));
     getWord(word);
     if (validDomain(DNS, word) == 1 || validIP(DNS, _strdup(word)) == 1) {
+        free(word);
+
         printf("Error domain!\n");
         return;
     }
@@ -435,13 +453,17 @@ void showCache(cacheEntryT *Head) {
 
 int findIpInFile(FILE *DNS, const char *IP) {
     char *word = (char *) calloc(KB, sizeof(char *));
-    if (validIP(DNS, _strdup(IP)) == 2 || validIP(DNS, _strdup(IP)) == 0)
+    if (validIP(DNS, _strdup(IP)) == 2 || validIP(DNS, _strdup(IP)) == 0) {
+        free((char*)IP);
+        free(word);
         return 0;
+    }
     fseek(DNS, 0, SEEK_SET);
     while (feof(DNS) == 0) {
         fscanf_s(DNS, "%s", word, 1000);
-        if (strcmp(IP, word) == 0)
+        if (strcmp(IP, word) == 0) {
             return 1;
+        }
     }
     return 0;
 }
@@ -459,10 +481,17 @@ void foundAllDomains(FILE *DNS) {
                 strtok_s(buffer, " ", &buffer);
                 printf("Domain:%s\n", buffer);
                 word = _strdup(buffer);
+
             }
         }
-    } else
+        free(word);
+        free(buffer);
+    } else {
+        free(buffer);
+        free(word);
         printf("We don't have this ip in File.\n");
+    }
+
 }
 
 int menu(FILE *DNS, cacheT **cache, cacheEntryT **Head, cacheEntryT **Tail) {
