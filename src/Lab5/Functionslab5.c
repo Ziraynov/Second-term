@@ -235,7 +235,7 @@ int fisrtLetter(const char *str) {
 
 int checkNumbers(char *str) {
     char *str1=(char*) calloc(KB,sizeof(char));
-    strtok_r(str,".",&str1);
+    strtok_s(str,".",&str1);
     if (fisrtLetter(str1) == 1)
         return 0;
     if (atoi(str1) >= 0 && atoi(str1) <= 255)
