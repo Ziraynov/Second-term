@@ -250,7 +250,7 @@ int findDotsNumbers(char *IP) {
     strtok_r(IP, ".", &str);
     if (checkNumbers(str) == 0)
         return 0;
-    strtok_r(NULL, ".", &IP);
+    strtok_r(IP, ".", &str);
     while (checkNumbers(str) != 0) {
         count++;
         if (count == 4)
