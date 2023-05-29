@@ -180,8 +180,6 @@ int second_word(const char *pre, const char *array) {
         if (pre[count++] != array[i++])
             return 0;
     return 1;
-
-
 }
 
 char *get_the_word(char **doc, const char *firststr, const char *secondstr) {

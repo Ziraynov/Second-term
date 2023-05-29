@@ -180,10 +180,10 @@ void median_filtration(int height, int width, pixels **ptrs) {
         for (int j = 1; j < width - 1; j++)
             ptrs[i][j] = pix[i - 1][j - 1];
 
-free(pix);
+    free(pix);
 }
 
-void menu(int height, int width, pixels **ptrs,const bmpInfo *info) {
+void menu(int height, int width, pixels **ptrs, const bmpInfo *info) {
     printf("1)Black and White\n2)Negative\n3)Median Filtration\n4)Gamma-correction\n");
     int key = 0;
     key = check_for_menu(key);

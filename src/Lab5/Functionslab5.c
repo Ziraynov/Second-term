@@ -183,7 +183,6 @@ void addToCache(cacheT **table, const char *domain, const char *IP, cacheEntryT 
     unsigned int hash = hashFunction(domain);
     unsigned int hash1 = hashFunction1(domain);
 
-
     char *str = NULL;
     int flag;
     flag = addList(table, hash, domain, IP, Head, Tail);
@@ -351,15 +350,15 @@ void add(FILE *DNS, cacheT **cache, cacheEntryT **Head, cacheEntryT **Tail) {
         free(str3);
         free(str);
         free(str2);
-        str3=NULL;
-        str=NULL;
-        str2=NULL;
+        str3 = NULL;
+        str = NULL;
+        str2 = NULL;
         printf("This IP is not valid or we already have it.\n");
     } else if (validIP(DNS, str2) == 1) {
         free(str);
-        str=NULL;
+        str = NULL;
         free(str2);
-        str2=NULL;
+        str2 = NULL;
         putInFile(word, IP, DNS, 0);
         addToCache(cache, word, IP, Head, Tail);
         free(word);
@@ -482,7 +481,7 @@ int findIpInFile(FILE *DNS, const char *IP) {
         fscanf_s(DNS, "%s", word, 1000);
         if (strcmp(IP, word) == 0) {
             free(word);
-            word=NULL;
+            word = NULL;
             return 1;
         }
     }
@@ -501,19 +500,19 @@ void foundAllDomains(FILE *DNS) {
 
             if (strstr(buffer, word) != NULL) {
                 free(word);
-                word=NULL;
+                word = NULL;
                 strtok_s(buffer, " ", &buffer);
                 printf("Domain:%s\n", buffer);
                 word = _strdup(buffer);
                 free(buffer);
-                buffer=NULL;
+                buffer = NULL;
 
             }
         }
         free(word);
-        word=NULL;
+        word = NULL;
         free(buffer);
-        buffer=NULL;
+        buffer = NULL;
     } else {
         free(buffer);
         free(word);

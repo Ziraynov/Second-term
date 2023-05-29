@@ -258,23 +258,29 @@ void free_structs(short_words *data) {
 }
 
 void rewrite_file(const char *old_file, const char *new_file, long_words *words, short_words *words1, int size) {
-
-    FILE *file;
-    fopen_s(&file, old_file, "r");
-    FILE *newfile;
-    fopen_s(&newfile, new_file, "w");
-    if (file == NULL || newfile == NULL) {
-        printf("Ошибка при открытии файла!");
+    FILE* file;
+    if (fopen_s(&file, old_file, "r") != 0) {
+        printf("Ошибка при открытии файла!\n");
         return;
     }
+
+    FILE* newfile;
+    if (fopen_s(&newfile, new_file, "w") != 0) {
+        printf("Ошибка при открытии файла!\n");
+        fclose(file);
+        return;
+    }
+
     int amount = 0;
     for (int i = 0; i < size; i++)
-        amount += 2 + (int) strlen(words[i].long_word) + (int) strlen(words1[i].short_word);
-    char *am = (char *) calloc(1, sizeof(char));
-    _itoa_s(amount, am, 100000, 10);
+        amount += 2 + (int)strlen(words[i].long_word) + (int)strlen(words1[i].short_word);
+
+    char* am = (char*)calloc(100, sizeof(char));  // Increased the size to accommodate the number
+    _itoa_s(amount, am, 100, 10);
     fputs(am, newfile);
     fputs(" ", newfile);
     free(am);
+
     for (int i = 0; i < size; i++) {
         fputs(" ", newfile);
         fputs(words[i].long_word, newfile);
@@ -282,25 +288,32 @@ void rewrite_file(const char *old_file, const char *new_file, long_words *words,
         fputs(words1[i].short_word, newfile);
     }
     fputs("\n", newfile);
-    char *line = (char *) calloc(5001, sizeof(char));
-    const char *buffer=(char *) calloc(5001, sizeof(char));
-    while (fgets(line, 5000, file)) {
-        buffer = line;
-        for (int i = 0; i < size-1; i++) {
-            buffer = new_str(buffer, words[i].long_word, words1[i].short_word);
+
+    char line[5001];
+    char* buffer = (char*)calloc(5001, sizeof(char));
+
+    while (fgets(line, sizeof(line), file)) {
+        strncpy(buffer, line, sizeof((char*)buffer));
+
+        for (int i = 0; i < size - 1; i++) {
+            char* modified = (char*)new_str(buffer, words[i].long_word, words1[i].short_word);
+            if (modified != NULL) {
+                free(buffer);
+                buffer = modified;
+            }
         }
+
         fputs(buffer, newfile);
     }
-    free((char*)buffer);
-    line=NULL;
-    free(line);
-    free_structl(words);
-    free_structs(words1);
+
+    free(buffer);
     fclose(file);
     fclose(newfile);
-    printf("Файл успешно перезаписан!\n");
-
+    free_structl(words);
+    free_structs(words1);
 }
+
+
 
 void free_stack(LIFO **head) {
     while (*head != NULL) {
