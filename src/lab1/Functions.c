@@ -183,21 +183,24 @@ int second_word(const char *pre, const char *array) {
 }
 
 char *get_the_word(char **doc, const char *firststr, const char *secondstr) {
-
-    unsigned long long lenfirst;
+    unsigned int lenfirst = (unsigned int) strlen(firststr);
     const char *buf = strstr((*doc), firststr);
+
     if (buf == NULL)
         return NULL;
+
     const char *buf2 = strstr(buf, secondstr);
-    size_t len = strlen(buf);
-    size_t len3 = strlen(buf2);
-    char *newstr1 = strstr(*doc, firststr);
-    lenfirst = (unsigned long long) strlen(firststr);
-    char *copy_of_str = calloc(len - len3 - lenfirst + 1, sizeof(char));  // Adjusted size to include null terminator
-    strncpy_s(copy_of_str, len - len3 - lenfirst + 1, &newstr1[lenfirst],
-              len - len3 - lenfirst);  // Adjusted length argument
-    copy_of_str[len - len3 - lenfirst] = '\0';
-    *doc = newstr1;
+    if (buf2 == NULL)
+        return NULL;
+
+    unsigned int len = (unsigned int) (buf2 - buf);
+    char *newstr1 = (char *) buf;
+    char *copy_of_str = (char *) calloc(len - lenfirst + 1, sizeof(char));
+    strncpy_s(copy_of_str, len - lenfirst + 1, newstr1 + lenfirst, len - lenfirst);
+    copy_of_str[len - lenfirst] = '\0';
+
+    *doc = newstr1 + len;
+
     return copy_of_str;
 }
 
