@@ -223,6 +223,7 @@ void getIndex(int *x, int a, int b) {
 
 void getWord(char *word) {
     scanf_s("%s", word, 10000);
+
 }
 
 int checkInFIle(FILE *DNS, const char *word) {
