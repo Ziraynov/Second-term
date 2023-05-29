@@ -61,7 +61,9 @@ void get_pixels(const char *path, bmpInfo *info, unsigned int offset) {
     *info = a;
     fclose(file);
     menu(height, width, ptrs, info);
-    ptrs=NULL;
+    for (int i = 0; i < height; i++) {
+        free(ptrs[i]);
+    }
     free(ptrs);
 }
 
